@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Earn By Tasks</title>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header class="header">
+        <nav class="navbar">
+            <ul>
+                <li><a href="#">Home</a></li>
+                <li><a href="login.html">Login</a></li>
+                <li><a href="signup.html">Sign Up</a></li>
+            </ul>
+        </nav>
+        <div class="hero-section">
+            <h1>Earn Money by Watching Videos, Playing Games, and Completing Tasks</h1>
+            <p>Join our platform to earn real rewards for simple tasks!</p>
+            <a href="signup.html" class="signup.html">Get Started</a>
+        </div>
+    </header>
+    <section class="how-it-works">
+        <h2>How It Works</h2>
+        <div class="steps">
+            <div class="step">
+                <h3>Watch Ads & Videos</h3>
+                <p>Earn money by watching short advertisements and video clips.</p>
+            </div>
+            <div class="step">
+                <h3>Play Games</h3>
+                <p>Complete gaming challenges and earn rewards for playing fun games.</p>
+            </div>
+            <div class="step">
+                <h3>Complete Tasks</h3>
+                <p>Finish simple tasks like surveys or product reviews and get paid instantly.</p>
+            </div>
+            <div class="step">
+                <h3>earn via refferals</h3>
+                <p>once you reffer an individual and copmpletes the account activation you receive 150ksh to your account which is withdrawable .</p>
+            </div>
+        </div>
+    </section>
+    <footer class="footer">
+        <p>© 2024 Earn By Tasks. All rights reserved.</p>
+    </footer>
+</body>
+</html>
