@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Withdraw - Annex Cash</title>
+    <link rel="stylesheet" href="styles.css">
+    <script>
+        async function fetchBalance() {
+            const email = 'user@example.com'; // Replace with the logged-in user's email
+            const response = await fetch('http://localhost:3000/getBalance', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ email })
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                document.getElementById("balance").textContent = data.coins; // Update the displayed balance
+            } else {
+                alert('Could not fetch balance.');
+            }
+        }
+
+        function confirmWithdrawal() {
+            const coinsToWithdraw = document.getElementById("coinsToWithdraw").value;
+            const balance = parseInt(document.getElementById("balance").textContent); // Convert balance to an integer
+
+            // Check if the input is a valid number
+            if (isNaN(coinsToWithdraw) || coinsToWithdraw <= 0) {
+                alert("Please enter a valid number of coins to withdraw.");
+                return; // Exit the function if the input is invalid
+            }
+
+            // Validate if the withdrawal amount exceeds the balance
+            if (coinsToWithdraw > balance) {
+                alert("You do not have enough coins to withdraw this amount."); // Show error if insufficient balance
+                return; // Exit the function to prevent further execution
+            }
+
+            // Confirmation popup for the withdrawal
+            const confirmation = confirm(Are you sure you want to withdraw ${coinsToWithdraw} coins? This is equivalent to Ksh ${coinsToWithdraw}.);
+            if (confirmation) {
+                // Here, you would normally process the withdrawal (e.g., update the server and balance)
+                alert(Withdrawal of ${coinsToWithdraw} coins has been processed!);
+                // Update balance locally if needed (subtract the coins withdrawn)
+                document.getElementById("balance").textContent = balance - coinsToWithdraw; // Update the displayed balance
+            }
+        }
+
+        window.onload = fetchBalance; // Fetch balance when the page loads
+    </script>
+</head>
+<body>
+    <header>
+        <h1>Withdraw from Annex Cash</h1>
+    </header>
+
+    <main>
+        <div class="content">
+            <section id="withdraw">
+                <h2>Your Withdrawal Balance</h2>
+                <p id="balance">0</p> <!-- Initially 0, updated via JavaScript -->
+                <p>1 Coin = Ksh 1</p>
+                <label for="coinsToWithdraw">How many coins do you want to withdraw?</label>
+                <input type="number" id="coinsToWithdraw" min="1" placeholder="Enter coins to withdraw" required>
+                <button onclick="confirmWithdrawal()">Withdraw</button>
+            </section>
+        </div>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 Annex Cash. All rights reserved.</p>
+    </footer>
+</body>
+</html>
