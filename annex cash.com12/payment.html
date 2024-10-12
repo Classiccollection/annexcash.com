@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Annex Cash - Account Activation</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="payment-wrapper">
+        <header class="payment-header">
+            <h1>Annex Cash.com</h1>
+            <p>Account Activation - Pay Sh300 to Activate</p>
+        </header>
+        
+        <div class="payment-container">
+            <h2>Proceed to Payment</h2>
+            <p class="instruction-text">A push to pay request will be sent to your registered phone number <strong id="phone-number-display"></strong>. Please confirm the payment of <strong>Sh300</strong>.</p>
+            <form action="#" method="POST">
+                <div class="form-group">
+                    <label for="transaction-code">Enter Transaction Code</label>
+                    <input type="text" id="transaction-code" name="transaction-code" placeholder="MPESA transaction code" required>
+                </div>
+                <button type="submit" class="activate-btn">Activate Account</button>
+            </form>
+        </div>
+        
+        <div class="about-section">
+            <h3>About Annex Cash</h3>
+            <p>Annex Cash is a leading platform where you can earn money by engaging in simple activities like watching ads, playing games, and completing tasks.</p>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <p>© 2024 Annex Cash. All rights reserved.</p>
+    </footer>
+
+    <script>
+        // Get phone number from local storage or session storage for display
+        const phoneNumber = localStorage.getItem("userPhoneNumber") || "your registered number";
+        document.getElementById("phone-number-display").textContent = phoneNumber;
+    </script>
+</body>
+</html>
