@@ -3,189 +3,212 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Annex Cash - Home</title>
+    <title>Annex Cash - Main Dashboard</title>
     <style>
         body {
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
-            background-color: #f4f4f9;
+            background-color: #f7f7f7;
         }
 
-        /* Luxurious brown background */
         header {
-            background-color: #4b3621; /* Luxurious brown */
+            background-color: #4b3621;
             color: white;
-            padding: 10px;
-            position: fixed;
-            width: 100%;
-            top: 0;
-            z-index: 1;
+            padding: 10px 20px;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            position: relative;
         }
 
-        /* Hamburger icon style */
-        .menu-toggle {
+        header h1 {
+            margin: 0;
+        }
+
+        .toggle-menu {
             display: none;
-            flex-direction: column;
+            font-size: 24px;
             cursor: pointer;
         }
 
-        .menu-toggle div {
-            width: 30px;
-            height: 4px;
-            background-color: white;
-            margin: 5px 0;
-        }
-
-        /* Hide the menu initially for mobile view */
-        nav ul {
-            list-style-type: none;
-            margin: 0;
-            padding: 0;
+        .nav-links {
             display: flex;
-            align-items: center;
+            gap: 15px;
         }
 
-        nav ul li {
-            margin: 0 10px;
-        }
-
-        nav ul li a {
+        nav a {
             color: white;
             text-decoration: none;
             font-weight: bold;
         }
 
-        nav ul li.square {
-            background-color: #e0a899;
-            padding: 10px;
-            border-radius: 10px;
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+                flex-direction: column;
+                position: absolute;
+                background-color: #4b3621;
+                top: 50px;
+                left: 0;
+                width: 100%;
+                text-align: center;
+            }
+
+            .nav-links a {
+                padding: 10px;
+                border-bottom: 1px solid #333;
+            }
+
+            .toggle-menu {
+                display: block;
+            }
         }
 
-        /* Hide the nav in mobile by default */
-        nav ul {
-            display: none;
-            flex-direction: column;
-            width: 100%;
-        }
-
-        nav ul.show {
+        .nav-open .nav-links {
             display: flex;
         }
 
-        .content {
-            margin-top: 80px;
+        .container {
             padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
         }
 
-        section {
-            margin-bottom: 40px;
-        }
-
-        h2 {
+        .dashboard-heading {
+            text-align: center;
             color: #333;
         }
 
-        button {
-            background-color: #4b3621;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            cursor: pointer;
-            border-radius: 5px;
-            font-size: 16px;
+        .dashboard-heading h2 {
+            font-size: 32px;
+            margin-bottom: 10px;
         }
 
-        button:hover {
-            background-color: #3d2b1f;
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .card {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .card img {
+            max-width: 100px;
+            margin-bottom: 15px;
+        }
+
+        .card h3 {
+            font-size: 20px;
+            color: #4b3621;
+            margin-bottom: 10px;
+        }
+
+        .card p {
+            font-size: 16px;
+            color: #555;
+            margin-bottom: 15px;
+        }
+
+        .card a {
+            text-decoration: none;
+            color: white;
+            background-color: #007bff;
+            padding: 10px 20px;
+            border-radius: 5px;
+            display: inline-block;
+        }
+
+        .card a:hover {
+            background-color: #0056b3;
         }
 
         footer {
             background-color: #4b3621;
             color: white;
-            text-align: center;
             padding: 10px;
+            text-align: center;
             position: fixed;
             width: 100%;
             bottom: 0;
         }
-
-        /* Media Query for Mobile Devices */
-        @media screen and (max-width: 768px) {
-            .menu-toggle {
-                display: flex;
-            }
-
-            nav ul {
-                display: none;
-                flex-direction: column;
-                width: 100%;
-            }
-
-            nav ul.show {
-                display: flex;
-            }
-
-            nav ul li {
-                display: block;
-                text-align: center;
-                margin-bottom: 10px;
-            }
-        }
-
     </style>
 </head>
 <body>
+
+    <!-- Header Section -->
     <header>
         <h1>Annex Cash</h1>
-        <div class="menu-toggle" onclick="toggleMenu()">
-            <div></div>
-            <div></div>
-            <div></div>
-        </div>
-        <nav>
-            <ul id="menu">
-                <li class="square"><a href="#about">About</a></li>
-                <li class="square"><a href="#how-to-earn">How to Earn</a></li>
-                <li class="square"><a href="#watch-ads">Watch Ads</a></li>
-                <li class="square"><a href="#play-games">Play Games</a></li>
-                <li class="square"><a href="#answer-surveys">Answer Surveys</a></li>
-                <li class="square"><a href="#referral-links">Referral Links</a></li>
-                <li class="square"><a href="withdraw.html">Withdraw</a></li>
-                <li class="square"><a href="contact.html">Contact</a></li>
-                <li class="square"><a href="login.html">Log Out</a></li>
-            </ul>
+        <span class="toggle-menu" onclick="toggleNav()">☰</span>
+        <nav class="nav-links">
+            <a href="#">Play Games</a>
+            <a href="#">Answer Surveys</a>
+            <a href="#">Watch Ads</a>
+            <a href="#">Referrals</a>
+            <a href="#">My Rewards</a>
         </nav>
     </header>
 
-    <main>
-        <div class="content">
-            <section id="about">
-                <h2>About Annex Cash</h2>
-                <p>Annex Cash is a platform that allows users to earn money by participating in various activities.</p>
-            </section>
-
-            <section id="how-to-earn">
-                <h2>How to Earn Annex Coins</h2>
-                <p>There are multiple ways to earn annex coins on our platform...</p>
-            </section>
-
-            <!-- More sections... -->
+    <!-- Main Dashboard Section -->
+    <div class="container">
+        <div class="dashboard-heading">
+            <h2>Welcome to Your Annex Cash Dashboard!</h2>
+            <p>Start earning by engaging in any of the activities below.</p>
         </div>
-    </main>
 
+        <div class="card-grid">
+            <!-- Play Games Card -->
+            <div class="card">
+                <img src="games-icon.png" alt="Play Games">
+                <h3>Play Games</h3>
+                <p>Earn Annex Coins by playing fun and exciting games.</p>
+                <a href="#">Start Playing</a>
+            </div>
+
+            <!-- Answer Surveys Card -->
+            <div class="card">
+                <img src="surveys-icon.png" alt="Answer Surveys">
+                <h3>Answer Surveys</h3>
+                <p>Complete surveys and earn Annex Coins quickly.</p>
+                <a href="#">Start Survey</a>
+            </div>
+
+            <!-- Watch Ads Card -->
+            <div class="card">
+                <img src="ads-icon.png" alt="Watch Ads">
+                <h3>Watch Ads</h3>
+                <p>Watch short ads and videos to accumulate Annex Coins.</p>
+                <a href="#">Watch Now</a>
+            </div>
+
+            <!-- Referrals Card -->
+            <div class="card">
+                <img src="referrals-icon.png" alt="Referrals">
+                <h3>Referrals</h3>
+                <p>Earn more by referring friends to join Annex Cash.</p>
+                <a href="#">Invite Friends</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer Section -->
     <footer>
         <p>&copy; 2024 Annex Cash. All rights reserved.</p>
     </footer>
 
+    <!-- Toggle Menu Script for Mobile -->
     <script>
-        function toggleMenu() {
-            const menu = document.getElementById('menu');
-            menu.classList.toggle('show');
+        function toggleNav() {
+            const header = document.querySelector('header');
+            header.classList.toggle('nav-open');
         }
     </script>
+
 </body>
 </html>
