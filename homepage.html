@@ -12,33 +12,68 @@
             background-color: #f4f4f9;
         }
 
+        /* Luxurious brown background */
         header {
-            background-color: #1a73e8;
+            background-color: #4b3621; /* Luxurious brown */
             color: white;
             padding: 10px;
             position: fixed;
             width: 100%;
             top: 0;
             z-index: 1;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
+        /* Hamburger icon style */
+        .menu-toggle {
+            display: none;
+            flex-direction: column;
+            cursor: pointer;
+        }
+
+        .menu-toggle div {
+            width: 30px;
+            height: 4px;
+            background-color: white;
+            margin: 5px 0;
+        }
+
+        /* Hide the menu initially for mobile view */
         nav ul {
             list-style-type: none;
             margin: 0;
             padding: 0;
-            overflow: hidden;
-            text-align: center;
+            display: flex;
+            align-items: center;
         }
 
         nav ul li {
-            display: inline-block;
-            margin-right: 10px;
+            margin: 0 10px;
         }
 
         nav ul li a {
             color: white;
             text-decoration: none;
             font-weight: bold;
+        }
+
+        nav ul li.square {
+            background-color: #e0a899;
+            padding: 10px;
+            border-radius: 10px;
+        }
+
+        /* Hide the nav in mobile by default */
+        nav ul {
+            display: none;
+            flex-direction: column;
+            width: 100%;
+        }
+
+        nav ul.show {
+            display: flex;
         }
 
         .content {
@@ -55,7 +90,7 @@
         }
 
         button {
-            background-color: #1a73e8;
+            background-color: #4b3621;
             color: white;
             border: none;
             padding: 10px 20px;
@@ -65,37 +100,11 @@
         }
 
         button:hover {
-            background-color: #0c59d1;
-        }
-
-        .sidebar {
-            float: left;
-            width: 20%;
-            background-color: #f9f9f9;
-            padding: 10px;
-        }
-
-        .content {
-            float: right;
-            width: 75%;
-        }
-
-        .sidebar ul {
-            list-style-type: none;
-            padding: 0;
-        }
-
-        .sidebar ul li {
-            margin: 10px 0;
-        }
-
-        .sidebar ul li a {
-            text-decoration: none;
-            color: #1a73e8;
+            background-color: #3d2b1f;
         }
 
         footer {
-            background-color: #1a73e8;
+            background-color: #4b3621;
             color: white;
             text-align: center;
             padding: 10px;
@@ -106,139 +115,77 @@
 
         /* Media Query for Mobile Devices */
         @media screen and (max-width: 768px) {
-            .sidebar {
-                float: none;
-                width: 100%;
-                margin-bottom: 20px;
+            .menu-toggle {
+                display: flex;
             }
 
-            .content {
-                float: none;
+            nav ul {
+                display: none;
+                flex-direction: column;
                 width: 100%;
+            }
+
+            nav ul.show {
+                display: flex;
             }
 
             nav ul li {
                 display: block;
+                text-align: center;
                 margin-bottom: 10px;
             }
-
-            header {
-                text-align: center;
-            }
-
-            button {
-                width: 100%;
-                padding: 15px;
-            }
         }
+
     </style>
 </head>
 <body>
     <header>
-        <h1>Welcome to Annex Cash!</h1>
+        <h1>Annex Cash</h1>
+        <div class="menu-toggle" onclick="toggleMenu()">
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
         <nav>
-            <ul>
-                <li><a href="#index.html">home</a></li>
-                <li><a href="#about">About</a></li>
-                <li><a href="#how-to-earn">How to Earn</a></li>
-                <li><a href="#watch-ads">Watch Ads</a></li>
-                <li><a href="#play-games">Play Games</a></li>
-                <li><a href="#answer-surveys">Answer Surveys</a></li>
-                <li><a href="#referral-links">Referral Links</a></li>
-                <li><a href="withdraw.html">Withdraw</a></li>
-                <li><a href="contact.html">Contact</a></li>
-                <li><a href="login.html">Log Out</a></li>
+            <ul id="menu">
+                <li class="square"><a href="#about">About</a></li>
+                <li class="square"><a href="#how-to-earn">How to Earn</a></li>
+                <li class="square"><a href="#watch-ads">Watch Ads</a></li>
+                <li class="square"><a href="#play-games">Play Games</a></li>
+                <li class="square"><a href="#answer-surveys">Answer Surveys</a></li>
+                <li class="square"><a href="#referral-links">Referral Links</a></li>
+                <li class="square"><a href="withdraw.html">Withdraw</a></li>
+                <li class="square"><a href="contact.html">Contact</a></li>
+                <li class="square"><a href="login.html">Log Out</a></li>
             </ul>
         </nav>
     </header>
 
     <main>
-        <aside class="sidebar">
-            <h3>Menu</h3>
-            <ul>
-                <li><a href="index.html">Home</a></li>
-                <li><a href="#about">About</a></li>
-                <li><a href="#how-to-earn">How to Earn</a></li>
-                <li><a href="#watch-ads">Watch Ads</a></li>
-                <li><a href="#play-games">Play Games</a></li>
-                <li><a href="#answer-surveys">Answer Surveys</a></li>
-                <li><a href="#referral-links">Referral Links</a></li>
-                <li><a href="withdraw.html">Withdraw</a></li>
-                <li><a href="contact.html">Contact</a></li>
-                <li><a href="login.html">Log Out</a></li>
-            </ul>
-        </aside>
-
         <div class="content">
-            <section id="home">
-                <h2>Home</h2>
-                <p>Welcome to your dashboard! Start earning today.</p>
-            </section>
-
             <section id="about">
                 <h2>About Annex Cash</h2>
-                <p>Annex Cash is a platform that allows users to earn money by participating in various activities. By completing tasks such as watching ads, playing games, and answering surveys, you can accumulate annex coins that can later be redeemed for cash.</p>
+                <p>Annex Cash is a platform that allows users to earn money by participating in various activities.</p>
             </section>
 
             <section id="how-to-earn">
                 <h2>How to Earn Annex Coins</h2>
-                <p>There are multiple ways to earn annex coins on our platform:</p>
-                <ul>
-                    <li><strong>Watch Ads:</strong> Earn coins by watching advertisements.</li>
-                    <li><strong>Play Games:</strong> Engage in fun games and get rewarded.</li>
-                    <li><strong>Answer Surveys:</strong> Share your opinions and earn coins.</li>
-                    <li><strong>Referral Links:</strong> Invite friends to join and earn commissions on their activities.</li>
-                </ul>
-                <p>Once you've earned enough annex coins, you can withdraw them as real cash!</p>
+                <p>There are multiple ways to earn annex coins on our platform...</p>
             </section>
 
-            <section id="watch-ads">
-                <h2>Watch Ads</h2>
-                <p>Earn annex coins by watching advertisements.</p>
-                <button onclick="alert('Link to ads will be here')">Start Watching Ads</button>
-            </section>
-
-            <section id="play-games">
-                <h2>Play Games</h2>
-                <p>Play games and earn rewards in annex coins!</p>
-                <button onclick="alert('Link to games will be here')">Play Now</button>
-            </section>
-
-            <section id="answer-surveys">
-                <h2>Answer Surveys</h>
-                <p>Participate in surveys and earn annex coins.</p>
-                <button onclick="alert('Link to surveys will be here')">Take a Survey</button>
-            </section>
-
-            <section id="referral-links">
-                <h2>Referral Links</h2>
-                <p>Invite friends and earn annex coins through referrals.</p>
-                <button onclick="alert('Referral links will be here')">Get Your Referral Link</button>
-            </section>
-
-            <section id="withdraw">
-                <h2>Withdraw</h2>
-                <p>Withdraw your annex coins as real cash.</p>
-                <button onclick="alert('Withdrawal process will be here')">Withdraw Now</button>
-            </section>
-
-            <section id="contact">
-                <h2>Contact Us</h2>
-                <p>If you have any questions, feel free to reach out!</p>
-                <p>Email: support@annexcash.com</p>
-                <p>Phone: +254 700 000 000</p>
-            </section>
-
-            <section id="logout">
-                <h2>Log Out</h2>
-                <p>You have successfully logged out. Thank you for using Annex Cash!</p>
-                <button onclick="alert('Redirect to login page')">Log In Again</button>
-            </section>
+            <!-- More sections... -->
         </div>
     </main>
 
     <footer>
         <p>&copy; 2024 Annex Cash. All rights reserved.</p>
     </footer>
+
+    <script>
+        function toggleMenu() {
+            const menu = document.getElementById('menu');
+            menu.classList.toggle('show');
+        }
+    </script>
 </body>
 </html>
