@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Annex Cash - Home</title>
-    <link rel="stylesheet" href="styles.css">
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -23,19 +22,16 @@
             z-index: 1;
         }
 
-        header h1 {
-            margin: 0;
-        }
-
         nav ul {
             list-style-type: none;
             margin: 0;
             padding: 0;
             overflow: hidden;
+            text-align: center;
         }
 
         nav ul li {
-            display: inline;
+            display: inline-block;
             margin-right: 10px;
         }
 
@@ -107,6 +103,34 @@
             width: 100%;
             bottom: 0;
         }
+
+        /* Media Query for Mobile Devices */
+        @media screen and (max-width: 768px) {
+            .sidebar {
+                float: none;
+                width: 100%;
+                margin-bottom: 20px;
+            }
+
+            .content {
+                float: none;
+                width: 100%;
+            }
+
+            nav ul li {
+                display: block;
+                margin-bottom: 10px;
+            }
+
+            header {
+                text-align: center;
+            }
+
+            button {
+                width: 100%;
+                padding: 15px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -121,7 +145,7 @@
                 <li><a href="#answer-surveys">Answer Surveys</a></li>
                 <li><a href="#referral-links">Referral Links</a></li>
                 <li><a href="withdraw.html">Withdraw</a></li>
-                <li><a href="#contact">Contact</a></li>
+                <li><a href="contact.html">Contact</a></li>
                 <li><a href="login.html">Log Out</a></li>
             </ul>
         </nav>
@@ -139,7 +163,7 @@
                 <li><a href="#answer-surveys">Answer Surveys</a></li>
                 <li><a href="#referral-links">Referral Links</a></li>
                 <li><a href="withdraw.html">Withdraw</a></li>
-                <li><a href="#contact">Contact</a></li>
+                <li><a href="contact.html">Contact</a></li>
                 <li><a href="login.html">Log Out</a></li>
             </ul>
         </aside>
@@ -180,7 +204,7 @@
             </section>
 
             <section id="answer-surveys">
-                <h2>Answer Surveys</h2>
+                <h2>Answer Surveys</h>
                 <p>Participate in surveys and earn annex coins.</p>
                 <button onclick="alert('Link to surveys will be here')">Take a Survey</button>
             </section>
