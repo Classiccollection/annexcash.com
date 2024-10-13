@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Us - Annex Cash</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f7f7f7;
+        }
+
+        header {
+            background-color: #4b3621;
+            color: white;
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+        }
+
+        header h1 {
+            margin: 0;
+        }
+
+        .toggle-menu {
+            display: none;
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 15px;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+                flex-direction: column;
+                position: absolute;
+                background-color: #4b3621;
+                top: 50px;
+                left: 0;
+                width: 100%;
+                text-align: center;
+            }
+
+            .nav-links a {
+                padding: 10px;
+                border-bottom: 1px solid #333;
+            }
+
+            .toggle-menu {
+                display: block;
+            }
+        }
+
+        .nav-open .nav-links {
+            display: flex;
+        }
+
+        .container {
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: white;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+
+        .about-heading {
+            text-align: center;
+            color: #4b3621;
+        }
+
+        .about-heading h2 {
+            font-size: 36px;
+            margin-bottom: 10px;
+        }
+
+        .about-heading p {
+            font-size: 18px;
+            color: #555;
+        }
+
+        .about-content {
+            margin-top: 20px;
+            line-height: 1.8;
+            font-size: 16px;
+            color: #333;
+        }
+
+        footer {
+            background-color: #4b3621;
+            color: white;
+            padding: 10px;
+            text-align: center;
+            position: fixed;
+            width: 100%;
+            bottom: 0;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header Section -->
+    <header>
+        <h1>Annex Cash</h1>
+        <span class="toggle-menu" onclick="toggleNav()">☰</span>
+        <nav class="nav-links">
+            <a href="index.html">Home</a>
+            <a href="#">Play Games</a>
+            <a href="#">Answer Surveys</a>
+            <a href="#">Watch Ads</a>
+            <a href="about.html">About Us</a>
+            <a href="#">My Rewards</a>
+        </nav>
+    </header>
+
+    <!-- Main About Section -->
+    <div class="container">
+        <div class="about-heading">
+            <h2>About Annex Cash</h2>
+            <p>Who we are and how you can earn with us</p>
+        </div>
+
+        <div class="about-content">
+            <p>
+                Annex Cash is your go-to platform for earning money online through various engaging activities.
+                Whether it's playing games, answering surveys, watching ads, or referring friends, Annex Cash offers a range of ways to accumulate 'Annex Coins' which can be converted to real cash.
+            </p>
+
+            <p>
+                Our mission is to make earning money fun, flexible, and accessible for everyone. We pride ourselves on creating a user-friendly platform where you can engage in enjoyable activities and earn at your own pace.
+            </p>
+
+            <p>
+                With Annex Cash, you are in control of how much you earn. Simply choose from the available tasks, such as playing games, watching short advertisements, or completing surveys. Every action contributes to your balance, and the more you do, the more you earn!
+            </p>
+
+            <p>
+                Our platform is open to anyone, and we provide several rewards, bonuses, and referral programs to make your journey even more exciting. Thank you for being a part of the Annex Cash community!
+            </p>
+        </div>
+    </div>
+
+    <!-- Footer Section -->
+    <footer>
+        <p>&copy; 2024 Annex Cash. All rights reserved.</p>
+    </footer>
+
+    <!-- Toggle Menu Script for Mobile -->
+    <script>
+        function toggleNav() {
+            const header = document.querySelector('header');
+            header.classList.toggle('nav-open');
+        }
+    </script>
+
+</body>
+</html>
