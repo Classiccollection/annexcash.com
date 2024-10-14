@@ -484,3 +484,107 @@ button:hover {
     color: white;
     transform: translateY(-3px); /* Lift effect on hover */
 }
+
+/* General reset and box sizing */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Body styling */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    color: #333;
+}
+
+/* Header */
+.signup-header {
+    text-align: center;
+    padding: 20px;
+    background-color: #6a4b36;
+    color: white;
+    position: relative;
+}
+
+/* Staff login button */
+.staff-login-btn {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    padding: 10px 15px;
+    background-color: #f5a623;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.staff-login-btn:hover {
+    background-color: #e69413;
+}
+
+/* Signup container */
+.signup-container {
+    max-width: 600px;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: white;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.form-group input, .form-group select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.signup-btn {
+    width: 100%;
+    padding: 15px;
+    background-color: #f5a623;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.signup-btn:hover {
+    background-color: #e69413;
+}
+
+/* Footer */
+.footer {
+    text-align: center;
+    padding: 10px;
+    background-color: #6a4b36;
+    color: white;
+}
+
+/* Responsive styling */
+@media (max-width: 600px) {
+    .signup-header {
+        text-align: center;
+    }
+
+    .staff-login-btn {
+        top: 15px;
+        right: 15px;
+        padding: 8px 12px;
+    }
+}
