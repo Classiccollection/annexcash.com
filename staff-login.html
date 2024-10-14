@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Annex Cash - Staff Login</title>
     <link rel="stylesheet" href="styles.css">
+    <!-- Import Firebase App and Auth SDKs -->
+    <script type="module" src="https://www.gstatic.com/firebasejs/9.14.0/firebase-app.js"></script>
+    <script type="module" src="https://www.gstatic.com/firebasejs/9.14.0/firebase-auth.js"></script>
 </head>
 <body>
     <div class="login-wrapper">
@@ -15,7 +18,7 @@
         
         <div class="login-container">
             <h2>Staff Login</h2>
-            <form action="#" method="POST">
+            <form id="staff-login-form">
                 <div class="form-group">
                     <label for="staff-id">Staff ID</label>
                     <input type="text" id="staff-id" name="staff-id" required>
@@ -33,5 +36,43 @@
     <footer class="footer">
         <p>© 2024 Annex Cash. All rights reserved.</p>
     </footer>
+
+    <!-- Firebase Configuration -->
+    <script type="module">
+        // Your web app's Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyD9NdDm3P26coUMtvQ_Rs88ylZX6tu_968",
+            authDomain: "annex-cash.firebaseapp.com",
+            projectId: "annex-cash",
+            storageBucket: "annex-cash.appspot.com",
+            messagingSenderId: "787593405771",
+            appId: "1:787593405771:web:80e357dcc861741b7fb4ce"
+        };
+
+        // Initialize Firebase
+        const app = firebase.initializeApp(firebaseConfig);
+        const auth = firebase.getAuth(app);
+
+        // Handle staff login
+        document.getElementById('staff-login-form').addEventListener('submit', async (event) => {
+            event.preventDefault(); // Prevent the default form submission
+
+            const email = document.getElementById('staff-id').value; // Assuming Staff ID is the email
+            const password = document.getElementById('password').value;
+
+            // Sign in user with email and password
+            try {
+                const userCredential = await firebase.signInWithEmailAndPassword(auth, email, password);
+                // User signed in successfully, redirect to staff homepage
+                alert('Login successful!');
+                window.location.href = 'staff-homepage.html'; // Change to your staff homepage
+            } catch (error) {
+                // Handle Errors here.
+                const errorCode = error.code;
+                const errorMessage = error.message;
+                alert(Error: ${errorMessage});
+            }
+        });
+    </script>
 </body>
 </html>
