@@ -3,63 +3,33 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Annex Cash - Sign Up</title>
+    <title>Annex Cash - Login</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div class="signup-wrapper">
-        <header class="signup-header">
+    <div class="login-wrapper">
+        <header class="login-header">
             <h1>Annex Cash.com</h1>
-            <p>Start your journey to earning money today!</p>
+            <p>Login to continue earning money today!</p>
             <a href="staff-login.html" class="staff-login-btn">Staff Login</a>
         </header>
         
-        <div class="signup-container">
-            <h2>Create Your Account</h2>
+        <div class="login-container">
+            <h2>Login to Your Account</h2>
             <form action="#" method="POST">
-                <div class="form-group">
-                    <label for="name">Full Name</label>
-                    <input type="text" id="name" name="name" required>
-                </div>
                 <div class="form-group">
                     <label for="email">Email Address</label>
                     <input type="email" id="email" name="email" required>
-                </div>
-                <div class="form-group phone-group">
-                    <label for="phone">Phone Number</label>
-                    <div class="phone-input">
-                        <select id="country-code" name="country-code" required>
-                            <option value="+254">Kenya (+254)</option>
-                            <option value="+1">USA (+1)</option>
-                            <option value="+44">UK (+44)</option>
-                            <option value="+91">India (+91)</option>
-                            <option value="+256">Uganda (+256)</option>
-                            <option value="+254">Other (+...)</option>
-                        </select>
-                        <input type="tel" id="phone" name="phone" required placeholder="123456789">
-                    </div>
                 </div>
                 <div class="form-group">
                     <label for="password">Password</label>
                     <input type="password" id="password" name="password" required>
                 </div>
-                <div class="form-group">
-                    <label for="confirm-password">Confirm Password</label>
-                    <input type="password" id="confirm-password" name="confirm-password" required>
-                </div>
-                <button type="submit" class="signup-btn">Sign Up</button>
+                <button type="submit" class="login-btn">Login</button>
             </form>
-            <p class="login-prompt">Already have an account? <a href="login.html">Login</a></p>
+            <p class="signup-prompt">Don't have an account? <a href="signup.html">Sign Up</a></p>
         </div>
         
         <div class="about-section">
             <h3>About Annex Cash</h3>
             <p>Annex Cash is a leading platform where you can earn real money by engaging in simple activities such as watching advertisements, playing games, and completing tasks. Join thousands of users already making money effortlessly!</p>
-        </div>
-    </div>
-
-    <footer class="footer">
-        <p>© 2024 Annex Cash. All rights reserved.</p>
-    </footer>
-</body>
-</html>
