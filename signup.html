@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Annex Cash - Sign Up</title>
     <link rel="stylesheet" href="styles.css">
+    <!-- Import Firebase App and Auth SDKs -->
+    <script type="module" src="https://www.gstatic.com/firebasejs/9.14.0/firebase-app.js"></script>
+    <script type="module" src="https://www.gstatic.com/firebasejs/9.14.0/firebase-auth.js"></script>
 </head>
 <body>
     <div class="signup-wrapper">
@@ -15,7 +18,7 @@
         
         <div class="signup-container">
             <h2>Create Your Account</h2>
-            <form action="#" method="POST">
+            <form id="signup-form">
                 <div class="form-group">
                     <label for="name">Full Name</label>
                     <input type="text" id="name" name="name" required>
@@ -60,5 +63,44 @@
     <footer class="footer">
         <p>© 2024 Annex Cash. All rights reserved.</p>
     </footer>
+
+    <!-- Firebase Configuration -->
+    <script type="module">
+        // Your web app's Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyD9NdDm3P26coUMtvQ_Rs88ylZX6tu_968",
+            authDomain: "annex-cash.firebaseapp.com",
+            projectId: "annex-cash",
+            storageBucket: "annex-cash.appspot.com",
+            messagingSenderId: "787593405771",
+            appId: "1:787593405771:web:80e357dcc861741b7fb4ce"
+        };
+
+        // Initialize Firebase
+        const app = firebase.initializeApp(firebaseConfig);
+        const auth = firebase.getAuth(app);
+
+        // Handle sign-up
+        document.getElementById('signup-form').addEventListener('submit', async (event) => {
+            event.preventDefault(); // Prevent the default form submission
+
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            // Create user with email and password
+            try {
+                const userCredential = await firebase.createUserWithEmailAndPassword(auth, email, password);
+                // User signed up successfully, redirect or show success message
+                alert('Sign up successful!');
+                // Optionally redirect to login or homepage
+                window.location.href = 'login.html'; // Change as needed
+            } catch (error) {
+                // Handle Errors here.
+                const errorCode = error.code;
+                const errorMessage = error.message;
+                alert(Error: ${errorMessage});
+            }
+        });
+    </script>
 </body>
 </html>
