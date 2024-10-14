@@ -85,6 +85,12 @@
             margin-bottom: 10px;
         }
 
+        .coin-balance {
+            font-size: 20px;
+            color: #4b3621;
+            margin: 15px 0;
+        }
+
         .card-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
@@ -147,7 +153,7 @@
         <h1>Annex Cash</h1>
         <span class="toggle-menu" onclick="toggleNav()">☰</span>
         <nav class="nav-links">
-             <a href="about.html">about us</a>
+            <a href="about.html">About Us</a>
             <a href="#">Play Games</a>
             <a href="#">Answer Surveys</a>
             <a href="#">Watch Ads</a>
@@ -161,6 +167,7 @@
         <div class="dashboard-heading">
             <h2>Welcome to Your Annex Cash Dashboard!</h2>
             <p>Start earning by engaging in any of the activities below.</p>
+            <div class="coin-balance" id="coin-balance">Your Coins: <span id="coins-earned">0</span></div>
         </div>
 
         <div class="card-grid">
@@ -188,7 +195,7 @@
                 <a href="#">Watch Now</a>
             </div>
 
-             <!-- Referrals Card -->
+            <!-- Referrals Card -->
             <div class="card">
                 <img src="referrals-icon.png" alt="Referrals">
                 <h3>Referrals</h3>
@@ -196,12 +203,12 @@
                 <a href="#">Invite Friends</a>
             </div>
             
-            <!-- withdraw Card -->
+            <!-- Withdraw Card -->
             <div class="card">
-                <img src="withdraw-icon.png" alt="withdraw">
-                <h3>Referrals</h3>
-                <p>withdraw to your registered number from as low as 1ksh.</p>
-                <a href="#withdraw.html">withdraw</a>
+                <img src="withdraw-icon.png" alt="Withdraw">
+                <h3>Withdraw</h3>
+                <p>Withdraw to your registered number from as low as 1 KSh.</p>
+                <a href="withdraw.html">Withdraw</a>
             </div>
         </div>
     </div>
@@ -216,6 +223,46 @@
         function toggleNav() {
             const header = document.querySelector('header');
             header.classList.toggle('nav-open');
+        }
+
+        // Firebase Configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyD9NdDm3P26coUMtvQ_Rs88ylZX6tu_968",
+            authDomain: "annex-cash.firebaseapp.com",
+            projectId: "annex-cash",
+            storageBucket: "annex-cash.appspot.com",
+            messagingSenderId: "787593405771",
+            appId: "1:787593405771:web:80e357dcc861741b7fb4ce"
+        };
+
+        // Initialize Firebase
+        const app = firebase.initializeApp(firebaseConfig);
+        const auth = firebase.getAuth(app);
+
+        // Check if user is logged in
+        firebase.onAuthStateChanged(auth, (user) => {
+            if (user) {
+                // User is signed in
+                const userId = user.uid;
+
+                // Fetch user's coin balance from the database (Firebase Firestore or Realtime Database)
+                // For demonstration, assuming a function fetchUserCoins(userId) exists
+                fetchUserCoins(userId).then(coins => {
+                    document.getElementById('coins-earned').innerText = coins;
+                }).catch(error => {
+                    console.error("Error fetching coins: ", error);
+                });
+
+            } else {
+                // User is not signed in, redirect to login page
+                window.location.href = 'login.html'; // Redirect to your login page
+            }
+        });
+
+        // Dummy function to simulate fetching user's coins
+        async function fetchUserCoins(userId) {
+            // Replace with your database fetching logic
+            return 100; // Example return value
         }
     </script>
 
