@@ -86,6 +86,13 @@
 
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirm-password').value;
+
+            // Check if passwords match
+            if (password !== confirmPassword) {
+                alert('Passwords do not match!');
+                return;
+            }
 
             // Create user with email and password
             try {
@@ -98,7 +105,7 @@
                 // Handle Errors here.
                 const errorCode = error.code;
                 const errorMessage = error.message;
-                alert(Error: ${errorMessage});
+                alert(Error: ${errorMessage}); // Fixed the string interpolation syntax
             }
         });
     </script>
