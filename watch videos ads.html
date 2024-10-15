@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Watch Ads</title>
+    <title>Watch Ads - Annex Cash</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         body {
@@ -11,6 +11,12 @@
             margin: 0;
             padding: 0;
             background-color: #f4f4f4;
+        }
+        header {
+            background-color: #007bff;
+            color: white;
+            padding: 15px;
+            text-align: center;
         }
         .container {
             padding: 30px;
@@ -21,8 +27,6 @@
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
         }
         h1 {
-            text-align: center;
-            margin-bottom: 20px;
             color: #333;
         }
         .video-list {
@@ -31,64 +35,43 @@
             gap: 20px;
         }
         .video-item {
-            background-color: #fff;
+            background: #e7e7e7;
             border-radius: 8px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
             overflow: hidden;
-            transition: transform 0.2s;
+            text-align: center;
         }
-        .video-item:hover {
-            transform: translateY(-5px);
-        }
-        .video-thumbnail {
+        .video-item img {
             width: 100%;
-            height: auto;
-            border-bottom: 4px solid #007bff;
         }
-        .video-content {
-            padding: 15px;
+        .video-item h3 {
+            padding: 10px;
         }
-        .video-title {
-            font-size: 18px;
-            margin: 0;
-            color: #007bff;
-        }
-        .video-points {
-            font-size: 14px;
-            color: #777;
-        }
-        .video-views {
-            font-size: 14px;
-            color: #777;
-        }
-        button {
+        .footer {
             background-color: #007bff;
             color: white;
-            padding: 10px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background-color 0.3s;
-            width: 100%;
-        }
-        button:hover {
-            background-color: #0056b3;
-        }
-        .alert {
-            color: red;
-            font-weight: bold;
             text-align: center;
+            padding: 10px;
+            position: relative;
+            bottom: 0;
+            width: 100%;
             margin-top: 20px;
         }
     </style>
 </head>
 <body>
 
+<header>
+    <h1>Watch Ads and Earn Coins</h1>
+</header>
+
 <div class="container">
-    <h1>Watch Ads</h1>
-    <div id="videoList" class="video-list"></div>
-    <div class="alert" id="alertMessage"></div>
+    <h2>Available Video Ads</h2>
+    <div class="video-list" id="videoList"></div>
 </div>
+
+<footer class="footer">
+    <p>&copy; 2024 Annex Cash. All rights reserved.</p>
+</footer>
 
 <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js"></script>
@@ -107,88 +90,45 @@
     const app = firebase.initializeApp(firebaseConfig);
     const database = firebase.getDatabase(app);
 
-    // Simulated User ID (Replace with actual user authentication logic)
-    const userId = "sampleUserId"; // Replace this with the actual user ID after login
-
-    // Load Videos from Firebase
-    function loadVideos() {
+    // Function to load video ads
+    function loadVideoAds() {
         const videoList = document.getElementById('videoList');
         videoList.innerHTML = ''; // Clear previous videos
 
-        // Fetch videos from Firebase (assumed structure: /videos)
         const videoRef = firebase.ref(database, 'videos');
         firebase.get(videoRef).then((snapshot) => {
             if (snapshot.exists()) {
                 const videos = snapshot.val();
                 for (const videoId in videos) {
                     const video = videos[videoId];
-                    createVideoItem(video, videoId);
+                    const videoItem = document.createElement('div');
+                    videoItem.className = 'video-item';
+                    videoItem.innerHTML = `
+                        <img src="${video.thumbnail}" alt="${video.title}">
+                        <h3>${video.title}</h3>
+                        <button onclick="watchVideo('${videoId}')">Watch Video</button>
+                    `;
+                    videoList.appendChild(videoItem);
                 }
             } else {
-                videoList.innerHTML = '<p>No videos available.</p>';
+                videoList.innerHTML = '<p>No video ads available at the moment.</p>';
             }
         }).catch((error) => {
             console.error("Error fetching videos: ", error);
         });
     }
 
-    function createVideoItem(video, videoId) {
-        const videoItem = document.createElement('div');
-        videoItem.className = 'video-item';
-
-        // Thumbnail (a placeholder image if the actual video doesn't have a thumbnail)
-        const thumbnail = video.thumbnail || 'https://via.placeholder.com/300x200';
-
-        videoItem.innerHTML = `
-            <img src="${thumbnail}" alt="${video.title}" class="video-thumbnail">
-            <div class="video-content">
-                <h3 class="video-title">${video.title}</h3>
-                <p class="video-points">Points: ${video.points}</p>
-                <p class="video-views">Views: ${video.views}/${video.maxViews}</p>
-                <button onclick="watchVideo('${videoId}')">Watch</button>
-            </div>
-        `;
-        document.getElementById('videoList').appendChild(videoItem);
-    }
-
     function watchVideo(videoId) {
-        const videoRef = firebase.ref(database, 'videos/' + videoId);
-        firebase.get(videoRef).then((snapshot) => {
-            if (snapshot.exists()) {
-                const video = snapshot.val();
-                if (video.views < video.maxViews) {
-                    // Increment views in the database
-                    video.views++;
-                    firebase.update(videoRef, { views: video.views });
-
-                    // Simulate earning points
-                    earnPoints(video.points);
-                    showAlert(You have watched ${video.title}. You've earned ${video.points} points!);
-                } else {
-                    showAlert(You have reached the maximum views for ${video.title}.);
-                }
-            }
-        }).catch((error) => {
-            console.error("Error watching video: ", error);
-        });
+        // Logic to watch video and award points
+        // This function should handle video playing and point allocation logic
+        alert(You are watching: ${videoId}); // Placeholder for actual video logic
+        // After watching, update user's balance in the database
     }
 
-    function earnPoints(points) {
-        // Implement logic to update user's coin balance in the database
-        // Example: updateUserBalance(points);
-        console.log(User earned ${points} points (this would update in DB).);
-    }
-
-    function showAlert(message) {
-        const alertMessage = document.getElementById('alertMessage');
-        alertMessage.textContent = message;
-        setTimeout(() => {
-            alertMessage.textContent = '';
-        }, 3000);
-    }
-
-    // Load videos on page load
-    loadVideos();
+    // Load video ads on page load
+    window.onload = function() {
+        loadVideoAds();
+    };
 </script>
 
 </body>
