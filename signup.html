@@ -8,6 +8,7 @@
     <!-- Import Firebase App and Auth SDKs -->
     <script type="module" src="https://www.gstatic.com/firebasejs/9.14.0/firebase-app.js"></script>
     <script type="module" src="https://www.gstatic.com/firebasejs/9.14.0/firebase-auth.js"></script>
+    <script type="module" src="https://www.gstatic.com/firebasejs/9.14.0/firebase-firestore.js"></script>
 </head>
 <body>
     <div class="signup-wrapper">
@@ -68,17 +69,18 @@
     <script type="module">
         // Your web app's Firebase configuration
         const firebaseConfig = {
-            apiKey: "AIzaSyD9NdDm3P26coUMtvQ_Rs88ylZX6tu_968",
-            authDomain: "annex-cash.firebaseapp.com",
-            projectId: "annex-cash",
-            storageBucket: "annex-cash.appspot.com",
-            messagingSenderId: "787593405771",
-            appId: "1:787593405771:web:80e357dcc861741b7fb4ce"
+            apiKey: "YOUR_API_KEY",
+            authDomain: "YOUR_AUTH_DOMAIN",
+            projectId: "YOUR_PROJECT_ID",
+            storageBucket: "YOUR_STORAGE_BUCKET",
+            messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+            appId: "YOUR_APP_ID"
         };
 
         // Initialize Firebase
         const app = firebase.initializeApp(firebaseConfig);
         const auth = firebase.getAuth(app);
+        const db = firebase.getFirestore(app); // Initialize Firestore
 
         // Handle sign-up
         document.getElementById('signup-form').addEventListener('submit', async (event) => {
@@ -87,6 +89,8 @@
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
             const confirmPassword = document.getElementById('confirm-password').value;
+            const name = document.getElementById('name').value;
+            const phone = document.getElementById('phone').value;
 
             // Check if passwords match
             if (password !== confirmPassword) {
@@ -97,14 +101,20 @@
             // Create user with email and password
             try {
                 const userCredential = await firebase.createUserWithEmailAndPassword(auth, email, password);
-                // User signed up successfully, redirect or show success message
+                const user = userCredential.user;
+
+                // Save user info to Firestore
+                await firebase.setDoc(firebase.doc(db, 'users', user.uid), {
+                    name: name,
+                    email: email,
+                    phone: phone,
+                    balance: 0 // Initialize user balance
+                });
+
                 alert('Sign up successful!');
-                // Optionally redirect to login or homepage
                 window.location.href = 'login.html'; // Change as needed
             } catch (error) {
-                // Handle Errors here.
-                const errorMessage = error.message;
-                alert(Error: ${errorMessage}); // Fixed the string interpolation syntax
+                alert(Error: ${error.message});
             }
         });
     </script>
