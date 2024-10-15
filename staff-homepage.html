@@ -153,14 +153,6 @@
         <h2>Uploaded Videos</h2>
         <ul class="video-list" id="video-list">
             <!-- Uploaded videos will be listed here -->
-            <li class="video-item">
-                Sample Video 1
-                <button class="delete-btn">Delete</button>
-            </li>
-            <li class="video-item">
-                Sample Video 2
-                <button class="delete-btn">Delete</button>
-            </li>
         </ul>
     </div>
 
@@ -176,14 +168,6 @@
         <h2>Uploaded Surveys</h2>
         <ul class="survey-list" id="survey-list">
             <!-- Uploaded surveys will be listed here -->
-            <li class="survey-item">
-                Sample Survey 1
-                <button class="delete-btn">Delete</button>
-            </li>
-            <li class="survey-item">
-                Sample Survey 2
-                <button class="delete-btn">Delete</button>
-            </li>
         </ul>
     </div>
 
@@ -199,14 +183,6 @@
         <h2>Uploaded Games</h2>
         <ul class="game-list" id="game-list">
             <!-- Uploaded games will be listed here -->
-            <li class="game-item">
-                Sample Game 1
-                <button class="delete-btn">Delete</button>
-            </li>
-            <li class="game-item">
-                Sample Game 2
-                <button class="delete-btn">Delete</button>
-            </li>
         </ul>
     </div>
 </div>
@@ -216,7 +192,13 @@
 </footer>
 
 <script>
-    // Sample JavaScript to simulate adding and deleting videos, surveys, and games
+    // Function to create delete button functionality
+    function createDeleteButton(itemList, itemElement) {
+        const deleteBtn = itemElement.querySelector('.delete-btn');
+        deleteBtn.addEventListener('click', () => {
+            itemList.removeChild(itemElement);
+        });
+    }
 
     document.getElementById('upload-video-btn').addEventListener('click', () => {
         const videoName = document.getElementById('video-upload').files[0]?.name || 'New Video';
@@ -226,6 +208,7 @@
             newVideo.classList.add('video-item');
             newVideo.innerHTML = ${videoName} <button class="delete-btn">Delete</button>;
             videoList.appendChild(newVideo);
+            createDeleteButton(videoList, newVideo); // Add delete functionality
         }
     });
 
@@ -237,6 +220,7 @@
             newSurvey.classList.add('survey-item');
             newSurvey.innerHTML = ${surveyURL} <button class="delete-btn">Delete</button>;
             surveyList.appendChild(newSurvey);
+            createDeleteButton(surveyList, newSurvey); // Add delete functionality
         }
     });
 
@@ -248,6 +232,7 @@
             newGame.classList.add('game-item');
             newGame.innerHTML = ${gameURL} <button class="delete-btn">Delete</button>;
             gameList.appendChild(newGame);
+            createDeleteButton(gameList, newGame); // Add delete functionality
         }
     });
 </script>
