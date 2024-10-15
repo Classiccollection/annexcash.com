@@ -154,9 +154,9 @@
         <span class="toggle-menu" onclick="toggleNav()">☰</span>
         <nav class="nav-links">
             <a href="about.html">About Us</a>
-            <a href="#">Play Games</a>
-            <a href="#">Answer Surveys</a>
-            <a href="#">Watch Ads</a>
+            <a href="tasks.html">Play Games</a>
+            <a href="tasks.html">Answer Surveys</a>
+            <a href="tasks.html">Watch Ads</a>
             <a href="#">Referrals</a>
             <a href="#">My Rewards</a>
         </nav>
@@ -176,7 +176,7 @@
                 <img src="games-icon.png" alt="Play Games">
                 <h3>Play Games</h3>
                 <p>Earn Annex Coins by playing fun and exciting games.</p>
-                <a href="#">Start Playing</a>
+                <a href="tasks.html?type=games">Start Playing</a>
             </div>
 
             <!-- Answer Surveys Card -->
@@ -184,7 +184,7 @@
                 <img src="surveys-icon.png" alt="Answer Surveys">
                 <h3>Answer Surveys</h3>
                 <p>Complete surveys and earn Annex Coins quickly.</p>
-                <a href="#">Start Survey</a>
+                <a href="tasks.html?type=surveys">Start Survey</a>
             </div>
 
             <!-- Watch Ads Card -->
@@ -192,7 +192,7 @@
                 <img src="ads-icon.png" alt="Watch Ads">
                 <h3>Watch Ads</h3>
                 <p>Watch short ads and videos to accumulate Annex Coins.</p>
-                <a href="#">Watch Now</a>
+                <a href="tasks.html?type=ads">Watch Now</a>
             </div>
 
             <!-- Referrals Card -->
@@ -246,7 +246,6 @@
                 const userId = user.uid;
 
                 // Fetch user's coin balance from the database (Firebase Firestore or Realtime Database)
-                // For demonstration, assuming a function fetchUserCoins(userId) exists
                 fetchUserCoins(userId).then(coins => {
                     document.getElementById('coins-earned').innerText = coins;
                 }).catch(error => {
