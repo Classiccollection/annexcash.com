@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Watch Video Ads - Annex Cash</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f7f7f7;
+        }
+
+        header {
+            background-color: #4b3621;
+            color: white;
+            padding: 10px 20px;
+            text-align: center;
+        }
+
+        .container {
+            padding: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .video-card {
+            background-color: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .video-card h3 {
+            margin: 0 0 10px;
+        }
+
+        .video-card video {
+            width: 100%;
+            height: auto;
+            margin-bottom: 10px;
+        }
+
+        .button {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 15px;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+
+        .button:hover {
+            background-color: #0056b3;
+        }
+
+        .coin-balance {
+            margin: 20px 0;
+            font-size: 20px;
+            color: #4b3621;
+        }
+
+        .disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Watch Video Ads</h1>
+    </header>
+
+    <div class="container">
+        <div class="coin-balance">
+            Your Coins: <span id="coins-earned">0</span>
+        </div>
+
+        <div id="video-list">
+            <!-- Sample Video Card -->
+            <div class="video-card" data-video-id="1">
+                <h3>Video Ad Title 1</h3>
+                <video src="path/to/video1.mp4" controls></video>
+                <button class="button" onclick="watchVideo(this)">Watch Video</button>
+            </div>
+            <!-- More video cards will be loaded dynamically -->
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2024 Annex Cash. All rights reserved.</p>
+    </footer>
+
+    <script>
+        // Example video data (you would typically fetch this from your database)
+        const videos = [
+            { id: 1, title: 'Video Ad Title 1', coins: 10, maxViews: 3 },
+            { id: 2, title: 'Video Ad Title 2', coins: 20, maxViews: 2 },
+            // Add more video objects here
+        ];
+
+        // Function to initialize video list
+        function loadVideos() {
+            const videoList = document.getElementById('video-list');
+            videoList.innerHTML = ''; // Clear existing content
+
+            videos.forEach(video => {
+                const videoCard = document.createElement('div');
+                videoCard.className = 'video-card';
+                videoCard.setAttribute('data-video-id', video.id);
+
+                videoCard.innerHTML = `
+                    <h3>${video.title}</h3>
+                    <video src="path/to/video${video.id}.mp4" controls></video>
+                    <button class="button" onclick="watchVideo(this)" data-views="${video.maxViews}">Watch Video</button>
+                `;
+                videoList.appendChild(videoCard);
+            });
+        }
+
+        // Function to watch video and update coins
+        function watchVideo(button) {
+            const videoCard = button.closest('.video-card');
+            const videoId = videoCard.getAttribute('data-video-id');
+            const maxViews = parseInt(button.getAttribute('data-views'));
+
+            // Check if the user has already reached the maximum views
+            if (maxViews > 0) {
+                // Decrease the views allowed
+                button.setAttribute('data-views', maxViews - 1);
+
+                // Here you would implement the logic to add coins to the user's balance
+                const coinsToAdd = videos.find(video => video.id == videoId).coins;
+                addCoins(coinsToAdd);
+
+                // Display a message after watching
+                alert(You have earned ${coinsToAdd} coins!);
+
+                // If views are exhausted, disable the button
+                if (maxViews - 1 === 0) {
+                    button.classList.add('disabled');
+                    button.innerText = 'Max Views Reached';
+                    button.disabled = true; // Prevent further clicks
+                }
+            } else {
+                alert('You have reached the maximum views for this video.');
+            }
+        }
+
+        // Function to add coins to the user's balance
+        function addCoins(amount) {
+            const coinsElement = document.getElementById('coins-earned');
+            const currentCoins = parseInt(coinsElement.innerText);
+            coinsElement.innerText = currentCoins + amount;
+        }
+
+        // Load videos on page load
+        window.onload = loadVideos;
+
+    </script>
+</body>
+</html>
