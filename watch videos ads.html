@@ -3,162 +3,193 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Watch Video Ads - Annex Cash</title>
+    <title>Watch Ads</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         body {
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
-            background-color: #f7f7f7;
+            background-color: #f4f4f4;
         }
-
-        header {
-            background-color: #4b3621;
-            color: white;
-            padding: 10px 20px;
-            text-align: center;
-        }
-
         .container {
-            padding: 20px;
-            max-width: 800px;
-            margin: 0 auto;
-        }
-
-        .video-card {
+            padding: 30px;
+            max-width: 1200px;
+            margin: auto;
             background-color: white;
-            padding: 15px;
             border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
             margin-bottom: 20px;
+            color: #333;
+        }
+        .video-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        .video-item {
+            background-color: #fff;
+            border-radius: 8px;
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            transition: transform 0.2s;
         }
-
-        .video-card h3 {
-            margin: 0 0 10px;
+        .video-item:hover {
+            transform: translateY(-5px);
         }
-
-        .video-card video {
+        .video-thumbnail {
             width: 100%;
             height: auto;
-            margin-bottom: 10px;
+            border-bottom: 4px solid #007bff;
         }
-
-        .button {
+        .video-content {
+            padding: 15px;
+        }
+        .video-title {
+            font-size: 18px;
+            margin: 0;
+            color: #007bff;
+        }
+        .video-points {
+            font-size: 14px;
+            color: #777;
+        }
+        .video-views {
+            font-size: 14px;
+            color: #777;
+        }
+        button {
             background-color: #007bff;
             color: white;
-            padding: 10px 15px;
-            text-decoration: none;
+            padding: 10px;
+            border: none;
             border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            width: 100%;
         }
-
-        .button:hover {
+        button:hover {
             background-color: #0056b3;
         }
-
-        .coin-balance {
-            margin: 20px 0;
-            font-size: 20px;
-            color: #4b3621;
-        }
-
-        .disabled {
-            background-color: #ccc;
-            cursor: not-allowed;
+        .alert {
+            color: red;
+            font-weight: bold;
+            text-align: center;
+            margin-top: 20px;
         }
     </style>
 </head>
 <body>
 
-    <header>
-        <h1>Watch Video Ads</h1>
-    </header>
+<div class="container">
+    <h1>Watch Ads</h1>
+    <div id="videoList" class="video-list"></div>
+    <div class="alert" id="alertMessage"></div>
+</div>
 
-    <div class="container">
-        <div class="coin-balance">
-            Your Coins: <span id="coins-earned">0</span>
-        </div>
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js"></script>
+<script>
+    // Firebase Configuration
+    const firebaseConfig = {
+        apiKey: "AIzaSyD9NdDm3P26coUMtvQ_Rs88ylZX6tu_968",
+        authDomain: "annex-cash.firebaseapp.com",
+        projectId: "annex-cash",
+        storageBucket: "annex-cash.appspot.com",
+        messagingSenderId: "787593405771",
+        appId: "1:787593405771:web:80e357dcc861741b7fb4ce"
+    };
 
-        <div id="video-list">
-            <!-- Sample Video Card -->
-            <div class="video-card" data-video-id="1">
-                <h3>Video Ad Title 1</h3>
-                <video src="path/to/video1.mp4" controls></video>
-                <button class="button" onclick="watchVideo(this)">Watch Video</button>
-            </div>
-            <!-- More video cards will be loaded dynamically -->
-        </div>
-    </div>
+    // Initialize Firebase
+    const app = firebase.initializeApp(firebaseConfig);
+    const database = firebase.getDatabase(app);
 
-    <footer>
-        <p>&copy; 2024 Annex Cash. All rights reserved.</p>
-    </footer>
+    // Simulated User ID (Replace with actual user authentication logic)
+    const userId = "sampleUserId"; // Replace this with the actual user ID after login
 
-    <script>
-        // Example video data (you would typically fetch this from your database)
-        const videos = [
-            { id: 1, title: 'Video Ad Title 1', coins: 10, maxViews: 3 },
-            { id: 2, title: 'Video Ad Title 2', coins: 20, maxViews: 2 },
-            // Add more video objects here
-        ];
+    // Load Videos from Firebase
+    function loadVideos() {
+        const videoList = document.getElementById('videoList');
+        videoList.innerHTML = ''; // Clear previous videos
 
-        // Function to initialize video list
-        function loadVideos() {
-            const videoList = document.getElementById('video-list');
-            videoList.innerHTML = ''; // Clear existing content
-
-            videos.forEach(video => {
-                const videoCard = document.createElement('div');
-                videoCard.className = 'video-card';
-                videoCard.setAttribute('data-video-id', video.id);
-
-                videoCard.innerHTML = `
-                    <h3>${video.title}</h3>
-                    <video src="path/to/video${video.id}.mp4" controls></video>
-                    <button class="button" onclick="watchVideo(this)" data-views="${video.maxViews}">Watch Video</button>
-                `;
-                videoList.appendChild(videoCard);
-            });
-        }
-
-        // Function to watch video and update coins
-        function watchVideo(button) {
-            const videoCard = button.closest('.video-card');
-            const videoId = videoCard.getAttribute('data-video-id');
-            const maxViews = parseInt(button.getAttribute('data-views'));
-
-            // Check if the user has already reached the maximum views
-            if (maxViews > 0) {
-                // Decrease the views allowed
-                button.setAttribute('data-views', maxViews - 1);
-
-                // Here you would implement the logic to add coins to the user's balance
-                const coinsToAdd = videos.find(video => video.id == videoId).coins;
-                addCoins(coinsToAdd);
-
-                // Display a message after watching
-                alert(You have earned ${coinsToAdd} coins!);
-
-                // If views are exhausted, disable the button
-                if (maxViews - 1 === 0) {
-                    button.classList.add('disabled');
-                    button.innerText = 'Max Views Reached';
-                    button.disabled = true; // Prevent further clicks
+        // Fetch videos from Firebase (assumed structure: /videos)
+        const videoRef = firebase.ref(database, 'videos');
+        firebase.get(videoRef).then((snapshot) => {
+            if (snapshot.exists()) {
+                const videos = snapshot.val();
+                for (const videoId in videos) {
+                    const video = videos[videoId];
+                    createVideoItem(video, videoId);
                 }
             } else {
-                alert('You have reached the maximum views for this video.');
+                videoList.innerHTML = '<p>No videos available.</p>';
             }
-        }
+        }).catch((error) => {
+            console.error("Error fetching videos: ", error);
+        });
+    }
 
-        // Function to add coins to the user's balance
-        function addCoins(amount) {
-            const coinsElement = document.getElementById('coins-earned');
-            const currentCoins = parseInt(coinsElement.innerText);
-            coinsElement.innerText = currentCoins + amount;
-        }
+    function createVideoItem(video, videoId) {
+        const videoItem = document.createElement('div');
+        videoItem.className = 'video-item';
 
-        // Load videos on page load
-        window.onload = loadVideos;
+        // Thumbnail (a placeholder image if the actual video doesn't have a thumbnail)
+        const thumbnail = video.thumbnail || 'https://via.placeholder.com/300x200';
 
-    </script>
+        videoItem.innerHTML = `
+            <img src="${thumbnail}" alt="${video.title}" class="video-thumbnail">
+            <div class="video-content">
+                <h3 class="video-title">${video.title}</h3>
+                <p class="video-points">Points: ${video.points}</p>
+                <p class="video-views">Views: ${video.views}/${video.maxViews}</p>
+                <button onclick="watchVideo('${videoId}')">Watch</button>
+            </div>
+        `;
+        document.getElementById('videoList').appendChild(videoItem);
+    }
+
+    function watchVideo(videoId) {
+        const videoRef = firebase.ref(database, 'videos/' + videoId);
+        firebase.get(videoRef).then((snapshot) => {
+            if (snapshot.exists()) {
+                const video = snapshot.val();
+                if (video.views < video.maxViews) {
+                    // Increment views in the database
+                    video.views++;
+                    firebase.update(videoRef, { views: video.views });
+
+                    // Simulate earning points
+                    earnPoints(video.points);
+                    showAlert(You have watched ${video.title}. You've earned ${video.points} points!);
+                } else {
+                    showAlert(You have reached the maximum views for ${video.title}.);
+                }
+            }
+        }).catch((error) => {
+            console.error("Error watching video: ", error);
+        });
+    }
+
+    function earnPoints(points) {
+        // Implement logic to update user's coin balance in the database
+        // Example: updateUserBalance(points);
+        console.log(User earned ${points} points (this would update in DB).);
+    }
+
+    function showAlert(message) {
+        const alertMessage = document.getElementById('alertMessage');
+        alertMessage.textContent = message;
+        setTimeout(() => {
+            alertMessage.textContent = '';
+        }, 3000);
+    }
+
+    // Load videos on page load
+    loadVideos();
+</script>
+
 </body>
 </html>
