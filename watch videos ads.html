@@ -3,132 +3,141 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Watch Ads - Annex Cash</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <title>Annex Cash - Watch Ads</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
+        /* General Styles */
+        body, html {
             margin: 0;
             padding: 0;
+            font-family: Arial, sans-serif;
             background-color: #f4f4f4;
         }
-        header {
-            background-color: #007bff;
-            color: white;
-            padding: 15px;
-            text-align: center;
-        }
+
         .container {
-            padding: 30px;
-            max-width: 1200px;
-            margin: auto;
-            background-color: white;
-            border-radius: 8px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            width: 90%;
+            margin: 0 auto;
         }
-        h1 {
-            color: #333;
-        }
-        .video-list {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 20px;
-        }
-        .video-item {
-            background: #e7e7e7;
-            border-radius: 8px;
-            overflow: hidden;
-            text-align: center;
-        }
-        .video-item img {
-            width: 100%;
-        }
-        .video-item h3 {
-            padding: 10px;
-        }
-        .footer {
-            background-color: #007bff;
+
+        header {
+            background-color: #4CAF50;
             color: white;
             text-align: center;
+            padding: 15px 0;
+        }
+
+        h1 {
+            margin: 0;
             padding: 10px;
-            position: relative;
-            bottom: 0;
+        }
+
+        .ads-container {
+            background-color: white;
+            margin: 20px 0;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Video Ad List */
+        .ad-list {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .ad-item {
+            margin: 20px 0;
+            padding: 10px;
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        .ad-video {
             width: 100%;
-            margin-top: 20px;
+            height: 300px;
+            background-color: #000;
+        }
+
+        .watch-btn {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        .watch-btn:hover {
+            background-color: #45a049;
+        }
+
+        /* Mobile Layout */
+        @media (max-width: 767px) {
+            .ads-container {
+                width: 100%;
+                margin: 20px auto;
+            }
+
+            .ad-item {
+                width: 100%;
+            }
+
+            .ad-video {
+                height: 200px;
+            }
+
+            .watch-btn {
+                width: 100%;
+            }
         }
     </style>
 </head>
 <body>
 
 <header>
-    <h1>Watch Ads and Earn Coins</h1>
+    <h1>Watch Ads & Earn Points</h1>
 </header>
 
 <div class="container">
-    <h2>Available Video Ads</h2>
-    <div class="video-list" id="videoList"></div>
+    <div class="ads-container">
+        <h2>Available Ads</h2>
+        <ul class="ad-list" id="ad-list">
+            <!-- Sample Ads -->
+            <li class="ad-item">
+                <div class="ad-video" id="video1">
+                    <!-- Placeholder video (replace with actual video when connected) -->
+                    <video width="100%" height="100%" controls>
+                        <source src="sample-ad1.mp4" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+                </div>
+                <button class="watch-btn" onclick="watchAd(1)">Watch & Earn</button>
+            </li>
+
+            <li class="ad-item">
+                <div class="ad-video" id="video2">
+                    <!-- Placeholder video (replace with actual video when connected) -->
+                    <video width="100%" height="100%" controls>
+                        <source src="sample-ad2.mp4" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+                </div>
+                <button class="watch-btn" onclick="watchAd(2)">Watch & Earn</button>
+            </li>
+        </ul>
+    </div>
 </div>
 
-<footer class="footer">
-    <p>&copy; 2024 Annex Cash. All rights reserved.</p>
+<footer>
+    <p style="text-align:center; padding: 10px;">© 2024 Annex Cash. All rights reserved.</p>
 </footer>
 
-<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js"></script>
 <script>
-    // Firebase Configuration
-    const firebaseConfig = {
-        apiKey: "AIzaSyD9NdDm3P26coUMtvQ_Rs88ylZX6tu_968",
-        authDomain: "annex-cash.firebaseapp.com",
-        projectId: "annex-cash",
-        storageBucket: "annex-cash.appspot.com",
-        messagingSenderId: "787593405771",
-        appId: "1:787593405771:web:80e357dcc861741b7fb4ce"
-    };
-
-    // Initialize Firebase
-    const app = firebase.initializeApp(firebaseConfig);
-    const database = firebase.getDatabase(app);
-
-    // Function to load video ads
-    function loadVideoAds() {
-        const videoList = document.getElementById('videoList');
-        videoList.innerHTML = ''; // Clear previous videos
-
-        const videoRef = firebase.ref(database, 'videos');
-        firebase.get(videoRef).then((snapshot) => {
-            if (snapshot.exists()) {
-                const videos = snapshot.val();
-                for (const videoId in videos) {
-                    const video = videos[videoId];
-                    const videoItem = document.createElement('div');
-                    videoItem.className = 'video-item';
-                    videoItem.innerHTML = `
-                        <img src="${video.thumbnail}" alt="${video.title}">
-                        <h3>${video.title}</h3>
-                        <button onclick="watchVideo('${videoId}')">Watch Video</button>
-                    `;
-                    videoList.appendChild(videoItem);
-                }
-            } else {
-                videoList.innerHTML = '<p>No video ads available at the moment.</p>';
-            }
-        }).catch((error) => {
-            console.error("Error fetching videos: ", error);
-        });
+    // Function to simulate watching an ad and earning points
+    function watchAd(adId) {
+        alert(You watched ad #${adId} and earned points!);
+        // In real app, points would be awarded and the ad would be marked as watched
     }
-
-    function watchVideo(videoId) {
-        // Logic to watch video and award points
-        // This function should handle video playing and point allocation logic
-        alert(You are watching: ${videoId}); // Placeholder for actual video logic
-        // After watching, update user's balance in the database
-    }
-
-    // Load video ads on page load
-    window.onload = function() {
-        loadVideoAds();
-    };
 </script>
 
 </body>
