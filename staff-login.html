@@ -25,6 +25,7 @@
                     <input type="password" id="password" name="password" required>
                 </div>
                 <button type="submit" class="login-btn">Login</button>
+                <p id="error-message" style="color: red; display: none;"></p> <!-- Error message paragraph -->
             </form>
             <p class="back-prompt"><a href="index.html">Back to Homepage</a></p>
         </div>
@@ -53,11 +54,15 @@
                 staff.email === email && staff.password === password
             );
 
+            // Display error message if login fails or redirect to the staff homepage if successful
+            const errorMessageElement = document.getElementById('error-message');
             if (isValidUser) {
+                errorMessageElement.style.display = 'none'; // Hide error message
                 alert('Login successful!');
                 window.location.href = 'staff-homepage.html'; // Redirect to the staff homepage
             } else {
-                alert('Invalid email or password. Please try again.');
+                errorMessageElement.textContent = 'Invalid email or password. Please try again.';
+                errorMessageElement.style.display = 'block'; // Show error message
             }
         });
     </script>
