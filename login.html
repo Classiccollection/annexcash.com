@@ -5,8 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Annex Cash - Login</title>
     <link rel="stylesheet" href="styles.css">
-    
-    <!-- Firebase SDKs -->
+    <!-- Import Firebase App and Auth SDKs -->
     <script type="module" src="https://www.gstatic.com/firebasejs/9.14.0/firebase-app.js"></script>
     <script type="module" src="https://www.gstatic.com/firebasejs/9.14.0/firebase-auth.js"></script>
 </head>
@@ -14,12 +13,11 @@
     <div class="login-wrapper">
         <header class="login-header">
             <h1>Annex Cash.com</h1>
-            <p>Login to continue earning money today!</p>
-            <a href="staff-login.html" class="staff-login-btn">Staff Login</a>
+            <p>Welcome back! Log in to continue.</p>
         </header>
         
         <div class="login-container">
-            <h2>Login to Your Account</h2>
+            <h2>Log In</h2>
             <form id="login-form">
                 <div class="form-group">
                     <label for="email">Email Address</label>
@@ -29,23 +27,18 @@
                     <label for="password">Password</label>
                     <input type="password" id="password" name="password" required>
                 </div>
-                <button type="submit" class="login-btn">Login</button>
+                <button type="submit" class="login-btn">Log In</button>
             </form>
-            <p class="signup-prompt">Don't have an account? <a href="signup.html">Sign Up</a></p>
+            <p class="signup-prompt">Don't have an account? <a href="signup.html">Sign up</a></p>
         </div>
         
-        <div class="about-section">
-            <h3>About Annex Cash</h3>
-            <p>Annex Cash is a leading platform where you can earn real money by engaging in simple activities such as watching advertisements, playing games, and completing tasks. Join thousands of users already making money effortlessly!</p>
-        </div>
+        <footer class="footer">
+            <p>© 2024 Annex Cash. All rights reserved.</p>
+        </footer>
     </div>
 
     <!-- Firebase Configuration -->
     <script type="module">
-        // Import the functions you need from the SDKs you need
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.14.0/firebase-app.js";
-        import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/9.14.0/firebase-auth.js";
-
         // Your web app's Firebase configuration
         const firebaseConfig = {
             apiKey: "AIzaSyD9NdDm3P26coUMtvQ_Rs88ylZX6tu_968",
@@ -57,26 +50,28 @@
         };
 
         // Initialize Firebase
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        
-        // Handle login
-        const loginForm = document.getElementById('login-form');
-        loginForm.addEventListener('submit', (e) => {
-            e.preventDefault(); // Prevent default form submission
-            
-            const email = loginForm['email'].value;
-            const password = loginForm['password'].value;
+        const app = firebase.initializeApp(firebaseConfig);
+        const auth = firebase.getAuth(app);
 
-            signInWithEmailAndPassword(auth, email, password)
-                .then((userCredential) => {
-                    // Redirect to the dashboard on successful login
-                    window.location.href = "dashboard.html";
-                })
-                .catch((error) => {
-                    console.error('Login failed:', error.message);
-                    alert(error.message); // Alert the error message to the user
-                });
+        // Handle login
+        document.getElementById('login-form').addEventListener('submit', async (event) => {
+            event.preventDefault(); // Prevent the default form submission
+
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            // Sign in with email and password
+            try {
+                const userCredential = await firebase.signInWithEmailAndPassword(auth, email, password);
+                // User signed in successfully, redirect or show success message
+                alert('Login successful!');
+                // Redirect to a different page after successful login
+                window.location.href = 'welcome.html'; // Change as needed
+            } catch (error) {
+                // Handle Errors here.
+                const errorMessage = error.message;
+                alert(Error: ${errorMessage});
+            }
         });
     </script>
 </body>
