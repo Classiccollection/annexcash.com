@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Staff Admin Panel - Annex Cash</title>
+    <link rel="stylesheet" href="styles.css">
+    <!-- Import Firebase App and Firestore SDKs -->
+    <script type="module" src="https://www.gstatic.com/firebasejs/9.14.0/firebase-app.js"></script>
+    <script type="module" src="https://www.gstatic.com/firebasejs/9.14.0/firebase-auth.js"></script>
+    <script type="module" src="https://www.gstatic.com/firebasejs/9.14.0/firebase-firestore.js"></script>
+</head>
+<body>
+    <div class="staff-wrapper">
+        <header class="staff-header">
+            <h1>Annex Cash Staff Portal</h1>
+            <p>Manage ads, surveys, games, and user accounts here.</p>
+            <button id="logout-btn" class="logout-btn">Logout</button>
+        </header>
+
+        <div class="staff-container">
+            <!-- Section to Add Ads, Surveys, and Games -->
+            <section id="manage-content">
+                <h2>Add Video Ads, Games, Surveys</h2>
+                <form id="add-content-form">
+                    <div class="form-group">
+                        <label for="content-type">Content Type</label>
+                        <select id="content-type" name="content-type" required>
+                            <option value="ad">Video Ad</option>
+                            <option value="game">Game</option>
+                            <option value="survey">Survey</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="content-url">Content URL</label>
+                        <input type="url" id="content-url" name="content-url" required>
+                    </div>
+                    <button type="submit" class="add-btn">Add Content</button>
+                </form>
+            </section>
+
+            <!-- Section to View User Accounts and Statistics -->
+            <section id="user-statistics">
+                <h2>User Accounts & Earnings</h2>
+                <div id="user-list">
+                    <!-- User accounts and earnings stats will be populated here dynamically -->
+                </div>
+            </section>
+
+            <!-- Section to Handle Withdrawal Requests -->
+            <section id="withdraw-requests">
+                <h2>Withdrawal Requests</h2>
+                <div id="withdraw-list">
+                    <!-- Withdrawal requests will be populated here dynamically -->
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <p>© 2024 Annex Cash. All rights reserved.</p>
+    </footer>
+
+    <!-- Firebase Configuration -->
+    <script type="module">
+        // Your Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyD9NdDm3P26coUMtvQ_Rs88ylZX6tu_968",
+            authDomain: "annex-cash.firebaseapp.com",
+            projectId: "annex-cash",
+            storageBucket: "annex-cash.appspot.com",
+            messagingSenderId: "787593405771",
+            appId: "1:787593405771:web:80e357dcc861741b7fb4ce"
+        };
+
+        // Initialize Firebase
+        const app = firebase.initializeApp(firebaseConfig);
+        const auth = firebase.getAuth(app);
+        const db = firebase.getFirestore(app);
+
+        // Handle Logout
+        document.getElementById('logout-btn').addEventListener('click', () => {
+            firebase.signOut(auth).then(() => {
+                window.location.href = 'staff-login.html'; // Redirect to staff login page
+            }).catch((error) => {
+                alert(Error: ${error.message});
+            });
+        });
+
+        // Add Content (Ads, Games, Surveys)
+        document.getElementById('add-content-form').addEventListener('submit', async (event) => {
+            event.preventDefault(); // Prevent default form submission
+            const contentType = document.getElementById('content-type').value;
+            const contentUrl = document.getElementById('content-url').value;
+
+            try {
+                // Save content to Firestore
+                await firebase.addDoc(firebase.collection(db, "content"), {
+                    type: contentType,
+                    url: contentUrl,
+                    addedAt: firebase.serverTimestamp()
+                });
+                alert('Content added successfully!');
+                document.getElementById('add-content-form').reset();
+            } catch (error) {
+                alert(Error adding content: ${error.message});
+            }
+        });
+
+        // Load User Accounts and Earnings Statistics
+        const loadUserAccounts = async () => {
+            const usersSnapshot = await firebase.getDocs(firebase.collection(db, "users"));
+            const userList = document.getElementById('user-list');
+            userList.innerHTML = ''; // Clear existing users
+
+            usersSnapshot.forEach((doc) => {
+                const userData = doc.data();
+                const userItem = document.createElement('div');
+                userItem.classList.add('user-item');
+                userItem.innerHTML = `
+                    <p><strong>${userData.email}</strong></p>
+                    <p>Total Earned: ${userData.totalEarnings} Annex Coins</p>
+                `;
+                userList.appendChild(userItem);
+            });
+        };
+
+        loadUserAccounts(); // Load users on page load
+
+        // Load Withdrawal Requests
+        const loadWithdrawRequests = async () => {
+            const withdrawSnapshot = await firebase.getDocs(firebase.collection(db, "withdrawRequests"));
+            const withdrawList = document.getElementById('withdraw-list');
+            withdrawList.innerHTML = ''; // Clear existing requests
+
+            withdrawSnapshot.forEach((doc) => {
+                const requestData = doc.data();
+                const requestItem = document.createElement('div');
+                requestItem.classList.add('withdraw-item');
+                requestItem.innerHTML = `
+                    <p><strong>${requestData.email}</strong></p>
+                    <p>Requested Amount: ${requestData.amount} Annex Coins</p>
+                    <button class="approve-btn" data-id="${doc.id}">Approve</button>
+                `;
+                withdrawList.appendChild(requestItem);
+            });
+
+            // Add click event listeners to Approve buttons
+            document.querySelectorAll('.approve-btn').forEach(button => {
+                button.addEventListener('click', async (event) => {
+                    const requestId = event.target.getAttribute('data-id');
+                    // Mark withdrawal request as approved
+                    await firebase.updateDoc(firebase.doc(db, 'withdrawRequests', requestId), {
+                        status: 'approved'
+                    });
+                    alert('Withdrawal approved!');
+                    loadWithdrawRequests(); // Reload requests after approval
+                });
+            });
+        };
+
+        loadWithdrawRequests(); // Load withdrawal requests on page load
+    </script>
+</body>
+</html>
