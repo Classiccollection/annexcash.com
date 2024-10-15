@@ -3,233 +3,118 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Staff Homepage - Annex Cash</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f4f4f4;
-        }
-        header {
-            background-color: #007bff;
-            color: white;
-            padding: 15px;
-            text-align: center;
-        }
-        .container {
-            padding: 30px;
-            max-width: 1200px;
-            margin: auto;
-            background-color: white;
-            border-radius: 8px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-        }
-        h1 {
-            color: #333;
-        }
-        .button {
-            display: inline-block;
-            margin: 10px 0;
-            padding: 10px 20px;
-            background-color: #007bff;
-            color: white;
-            text-decoration: none;
-            border-radius: 5px;
-        }
-        .upload-section, .survey-section, .manage-section, .withdrawal-section {
-            margin-bottom: 30px;
-            padding: 20px;
-            background: #e7e7e7;
-            border-radius: 8px;
-        }
-        .drag-drop {
-            border: 2px dashed #007bff;
-            padding: 20px;
-            text-align: center;
-            border-radius: 8px;
-            margin-bottom: 20px;
-        }
-        .file-info {
-            margin-top: 10px;
-        }
-        .video-list, .survey-list {
-            margin-top: 20px;
-        }
-        .item {
-            background: #d4d4d4;
-            padding: 10px;
-            margin: 5px 0;
-            border-radius: 5px;
-            display: flex;
-            justify-content: space-between;
-        }
-    </style>
+    <title>Annex Cash - Staff Homepage</title>
+    <link rel="stylesheet" href="styles.css">
+    <script type="module" src="https://www.gstatic.com/firebasejs/9.14.0/firebase-app.js"></script>
+    <script type="module" src="https://www.gstatic.com/firebasejs/9.14.0/firebase-auth.js"></script>
 </head>
 <body>
+    <header class="staff-header">
+        <h1>Welcome to Annex Cash Staff Portal</h1>
+        <nav>
+            <a href="logout.html">Logout</a>
+            <a href="registered-users.html">Registered Users</a>
+            <a href="track-users.html">Track Users Earnings</a>
+            <a href="approve-withdrawals.html">Approve Withdrawals</a>
+        </nav>
+    </header>
 
-<header>
-    <h1>Staff Homepage - Annex Cash</h1>
-</header>
+    <main>
+        <section id="upload-videos">
+            <h2>Upload Videos</h2>
+            <form id="video-upload-form">
+                <input type="file" id="videoFile" accept="video/*" required>
+                <input type="number" id="videoPoints" placeholder="Points to Award" required>
+                <input type="number" id="videoMaxViews" placeholder="Max Views" required>
+                <button type="submit">Upload Video</button>
+            </form>
+            <div id="uploadedVideosList"></div>
+        </section>
 
-<div class="container">
+        <section id="upload-surveys">
+            <h2>Upload Surveys</h2>
+            <form id="survey-upload-form">
+                <input type="text" id="surveyTitle" placeholder="Survey Title" required>
+                <input type="url" id="surveyLink" placeholder="Survey Link" required>
+                <input type="number" id="surveyPoints" placeholder="Points to Award" required>
+                <input type="number" id="surveyMaxViews" placeholder="Max Views" required>
+                <button type="submit">Upload Survey</button>
+            </form>
+            <div id="uploadedSurveysList"></div>
+        </section>
 
-    <div class="upload-section">
-        <h2>Add Video Ad</h2>
-        <div class="drag-drop" id="videoUpload">
-            <p>Drag and drop video files here or click to upload</p>
-        </div>
-        <div class="file-info" id="videoFileInfo"></div>
-        <button class="button" onclick="uploadVideo()">Upload Video</button>
-    </div>
+        <section id="upload-games">
+            <h2>Upload Games</h2>
+            <form id="game-upload-form">
+                <input type="text" id="gameTitle" placeholder="Game Title" required>
+                <input type="url" id="gameLink" placeholder="Game Link" required>
+                <input type="number" id="gamePoints" placeholder="Points to Award" required>
+                <input type="number" id="gameMaxPlays" placeholder="Max Plays" required>
+                <button type="submit">Upload Game</button>
+            </form>
+            <div id="uploadedGamesList"></div>
+        </section>
+    </main>
 
-    <div class="survey-section">
-        <h2>Add Survey</h2>
-        <form id="surveyForm">
-            <label for="surveyLink">Survey Link:</label>
-            <input type="url" id="surveyLink" placeholder="Enter survey link" required>
-            <label for="surveyPoints">Points Awarded:</label>
-            <input type="number" id="surveyPoints" placeholder="Enter points" required>
-            <button type="submit" class="button">Add Survey</button>
-        </form>
-    </div>
+    <footer class="footer">
+        <p>© 2024 Annex Cash. All rights reserved.</p>
+    </footer>
 
-    <div class="manage-section">
-        <h2>Manage Registered Users</h2>
-        <a href="registered_users.html" class="button">View Registered Users</a>
-        <a href="track_users.html" class="button">Track User Earnings</a>
-    </div>
-
-    <div class="withdrawal-section">
-        <h2>Approve Withdrawals</h2>
-        <a href="approve_withdrawals.html" class="button">View Pending Withdrawals</a>
-    </div>
-
-    <div class="uploaded-videos">
-        <h2>Uploaded Videos</h2>
-        <div class="video-list" id="uploadedVideoList"></div>
-    </div>
-
-    <div class="uploaded-surveys">
-        <h2>Uploaded Surveys</h2>
-        <div class="survey-list" id="uploadedSurveyList"></div>
-    </div>
-    
-</div>
-
-<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js"></script>
-<script>
-    // Firebase Configuration
-    const firebaseConfig = {
-        apiKey: "AIzaSyD9NdDm3P26coUMtvQ_Rs88ylZX6tu_968",
-        authDomain: "annex-cash.firebaseapp.com",
-        projectId: "annex-cash",
-        storageBucket: "annex-cash.appspot.com",
-        messagingSenderId: "787593405771",
-        appId: "1:787593405771:web:80e357dcc861741b7fb4ce"
-    };
-
-    // Initialize Firebase
-    const app = firebase.initializeApp(firebaseConfig);
-    const database = firebase.getDatabase(app);
-
-    // Drag and Drop Video Upload
-    const videoUpload = document.getElementById('videoUpload');
-    const videoFileInfo = document.getElementById('videoFileInfo');
-    let videoFile;
-
-    videoUpload.addEventListener('dragover', (event) => {
-        event.preventDefault();
-    });
-
-    videoUpload.addEventListener('drop', (event) => {
-        event.preventDefault();
-        videoFile = event.dataTransfer.files[0];
-        videoFileInfo.innerText = Selected file: ${videoFile.name};
-    });
-
-    videoUpload.addEventListener('click', () => {
-        const fileInput = document.createElement('input');
-        fileInput.type = 'file';
-        fileInput.accept = 'video/*';
-        fileInput.onchange = (event) => {
-            videoFile = event.target.files[0];
-            videoFileInfo.innerText = Selected file: ${videoFile.name};
-        };
-        fileInput.click();
-    });
-
-    function uploadVideo() {
-        if (!videoFile) {
-            alert('Please select a video file to upload.');
-            return;
-        }
-
-        // Code to upload video to Firebase Storage and add to the database
-        const videoRef = firebase.ref(database, 'videos');
-        const newVideoKey = firebase.push(videoRef).key;
-        const videoData = {
-            title: videoFile.name,
-            // Add other relevant metadata
+    <script type="module">
+        // Your web app's Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyD9NdDm3P26coUMtvQ_Rs88ylZX6tu_968",
+            authDomain: "annex-cash.firebaseapp.com",
+            projectId: "annex-cash",
+            storageBucket: "annex-cash.appspot.com",
+            messagingSenderId: "787593405771",
+            appId: "1:787593405771:web:80e357dcc861741b7fb4ce"
         };
 
-        // Add video metadata to the database
-        firebase.set(firebase.ref(database, 'videos/' + newVideoKey), videoData)
-            .then(() => {
-                alert('Video uploaded successfully!');
-                videoFileInfo.innerText = '';
-                loadUploadedVideos();
-            })
-            .catch((error) => {
-                console.error("Error uploading video: ", error);
-            });
-    }
+        // Initialize Firebase
+        const app = firebase.initializeApp(firebaseConfig);
+        const auth = firebase.getAuth(app);
 
-    function loadUploadedVideos() {
-        const uploadedVideoList = document.getElementById('uploadedVideoList');
-        uploadedVideoList.innerHTML = ''; // Clear previous videos
+        // Handle video uploads
+        document.getElementById('video-upload-form').addEventListener('submit', async (event) => {
+            event.preventDefault();
+            const videoFile = document.getElementById('videoFile').files[0];
+            const points = document.getElementById('videoPoints').value;
+            const maxViews = document.getElementById('videoMaxViews').value;
 
-        const videoRef = firebase.ref(database, 'videos');
-        firebase.get(videoRef).then((snapshot) => {
-            if (snapshot.exists()) {
-                const videos = snapshot.val();
-                for (const videoId in videos) {
-                    const video = videos[videoId];
-                    const videoItem = document.createElement('div');
-                    videoItem.className = 'item';
-                    videoItem.innerHTML = `
-                        <span>${video.title}</span>
-                        <button onclick="deleteVideo('${videoId}')">Delete</button>
-                    `;
-                    uploadedVideoList.appendChild(videoItem);
-                }
-            } else {
-                uploadedVideoList.innerHTML = '<p>No uploaded videos available.</p>';
-            }
-        }).catch((error) => {
-            console.error("Error fetching videos: ", error);
+            // Simulate video upload
+            const videoItem = document.createElement('div');
+            videoItem.textContent = Uploaded Video: ${videoFile.name}, Points: ${points}, Max Views: ${maxViews};
+            document.getElementById('uploadedVideosList').appendChild(videoItem);
         });
-    }
 
-    function deleteVideo(videoId) {
-        // Code to delete video from Firebase Storage and remove from the database
-        firebase.remove(firebase.ref(database, 'videos/' + videoId))
-            .then(() => {
-                alert('Video deleted successfully!');
-                loadUploadedVideos();
-            })
-            .catch((error) => {
-                console.error("Error deleting video: ", error);
-            });
-    }
+        // Handle survey uploads
+        document.getElementById('survey-upload-form').addEventListener('submit', (event) => {
+            event.preventDefault();
+            const title = document.getElementById('surveyTitle').value;
+            const link = document.getElementById('surveyLink').value;
+            const points = document.getElementById('surveyPoints').value;
+            const maxViews = document.getElementById('surveyMaxViews').value;
 
-    // Load uploaded videos on page load
-    window.onload = function() {
-        loadUploadedVideos();
-    };
-</script>
+            // Simulate survey upload
+            const surveyItem = document.createElement('div');
+            surveyItem.textContent = Uploaded Survey: ${title}, Link: ${link}, Points: ${points}, Max Views: ${maxViews};
+            document.getElementById('uploadedSurveysList').appendChild(surveyItem);
+        });
 
+        // Handle game uploads
+        document.getElementById('game-upload-form').addEventListener('submit', (event) => {
+            event.preventDefault();
+            const title = document.getElementById('gameTitle').value;
+            const link = document.getElementById('gameLink').value;
+            const points = document.getElementById('gamePoints').value;
+            const maxPlays = document.getElementById('gameMaxPlays').value;
+
+            // Simulate game upload
+            const gameItem = document.createElement('div');
+            gameItem.textContent = Uploaded Game: ${title}, Link: ${link}, Points: ${points}, Max Plays: ${maxPlays};
+            document.getElementById('uploadedGamesList').appendChild(gameItem);
+        });
+    </script>
 </body>
 </html>
