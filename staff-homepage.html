@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Staff Dashboard - Annex Cash</title>
+    <title>Staff Homepage - Annex Cash</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -11,85 +11,91 @@
             padding: 0;
             background-color: #f7f7f7;
         }
+
         header {
             background-color: #4b3621;
             color: white;
             padding: 10px 20px;
             text-align: center;
         }
+
         .container {
             padding: 20px;
-            max-width: 1200px;
+            max-width: 800px;
             margin: 0 auto;
         }
+
+        .upload-area {
+            border: 2px dashed #007bff;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .upload-area:hover {
+            background-color: #e9ecef;
+        }
+
+        .upload-input {
+            display: none;
+        }
+
         .task-list {
             margin-top: 20px;
-            border-collapse: collapse;
-            width: 100%;
         }
-        .task-list th, .task-list td {
-            border: 1px solid #ddd;
-            padding: 10px;
-            text-align: center;
+
+        .task-card {
+            background-color: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
         }
-        .task-list th {
-            background-color: #4b3621;
-            color: white;
-        }
+
         .button {
             background-color: #007bff;
             color: white;
-            padding: 10px 15px;
+            padding: 5px 10px;
             text-decoration: none;
             border-radius: 5px;
+            margin-right: 5px;
         }
+
         .button:hover {
             background-color: #0056b3;
         }
-        .edit-input {
-            width: 80px;
+
+        .disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
         }
     </style>
 </head>
 <body>
 
     <header>
-        <h1>Staff Dashboard</h1>
+        <h1>Staff Homepage</h1>
     </header>
 
     <div class="container">
-        <h2>Manage Tasks</h2>
-        
-        <table class="task-list">
-            <thead>
-                <tr>
-                    <th>Task Type</th>
-                    <th>Coins Awarded</th>
-                    <th>Max Plays</th>
-                    <th>Status</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody id="task-list-body">
-                <!-- Sample Task Row -->
-                <tr data-task-id="1">
-                    <td>Play Games</td>
-                    <td>
-                        <input type="number" class="edit-input" value="50" min="1">
-                    </td>
-                    <td>
-                        <input type="number" class="edit-input" value="5" min="1">
-                    </td>
-                    <td class="status">Active</td>
-                    <td>
-                        <button class="button" onclick="updateTask(this)">Update</button>
-                        <button class="button" onclick="toggleStatus(this)">Put on Hold</button>
-                        <button class="button" onclick="deleteTask(this)">Delete</button>
-                    </td>
-                </tr>
-                <!-- More Task Rows will be added dynamically -->
-            </tbody>
-        </table>
+        <div class="upload-area" id="upload-area">
+            <h3>Upload Video or Ad</h3>
+            <select id="task-type" class="upload-input">
+                <option value="video">Video Ad</option>
+                <option value="image">Image Ad</option>
+                <option value="survey">Survey Task</option>
+                <option value="game">Game Task</option>
+            </select>
+            <input type="file" id="file-input" accept="video/,image/" multiple class="upload-input">
+            <button id="file-upload-button" onclick="document.getElementById('file-input').click();">Choose Files</button>
+            <p>Drag and drop files here or click to select</p>
+        </div>
+
+        <div id="task-list" class="task-list">
+            <h3>Uploaded Tasks</h3>
+            <!-- Uploaded tasks will be displayed here -->
+        </div>
     </div>
 
     <footer>
@@ -97,46 +103,100 @@
     </footer>
 
     <script>
-        function updateTask(button) {
-            const row = button.closest('tr');
-            const taskId = row.getAttribute('data-task-id');
-            const coinsAwarded = row.querySelector('input[type="number"]:nth-of-type(1)').value;
-            const maxPlays = row.querySelector('input[type="number"]:nth-of-type(2)').value;
+        const taskList = document.getElementById('task-list');
+        const uploadArea = document.getElementById('upload-area');
+        const fileInput = document.getElementById('file-input');
+        const taskType = document.getElementById('task-type');
 
-            // Here you can send the updated values to your backend
-            console.log(Updating Task ${taskId}: Coins = ${coinsAwarded}, Max Plays = ${maxPlays});
-            // Make an API call to update the task in your database
+        // Handle drag-and-drop
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            uploadArea.style.backgroundColor = '#e9ecef';
+        });
+
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.style.backgroundColor = '';
+        });
+
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            uploadArea.style.backgroundColor = '';
+
+            const files = e.dataTransfer.files;
+            handleFiles(files);
+        });
+
+        fileInput.addEventListener('change', (e) => {
+            const files = e.target.files;
+            handleFiles(files);
+        });
+
+        function handleFiles(files) {
+            Array.from(files).forEach(file => {
+                const taskCard = document.createElement('div');
+                taskCard.className = 'task-card';
+                taskCard.setAttribute('data-file-name', file.name);
+
+                const taskTitle = document.createElement('h4');
+                taskTitle.innerText = file.name;
+                taskCard.appendChild(taskTitle);
+
+                // Add buttons for managing tasks
+                const viewButton = document.createElement('button');
+                viewButton.innerText = 'View';
+                viewButton.className = 'button';
+                viewButton.onclick = () => viewTask(file);
+
+                const holdButton = document.createElement('button');
+                holdButton.innerText = 'Put on Hold';
+                holdButton.className = 'button';
+                holdButton.onclick = () => putOnHold(taskCard);
+
+                const deleteButton = document.createElement('button');
+                deleteButton.innerText = 'Delete';
+                deleteButton.className = 'button';
+                deleteButton.onclick = () => deleteTask(taskCard);
+
+                const adjustButton = document.createElement('button');
+                adjustButton.innerText = 'Adjust Views & Coins';
+                adjustButton.className = 'button';
+                adjustButton.onclick = () => adjustTask(taskCard);
+
+                taskCard.appendChild(viewButton);
+                taskCard.appendChild(holdButton);
+                taskCard.appendChild(deleteButton);
+                taskCard.appendChild(adjustButton);
+
+                taskList.appendChild(taskCard);
+            });
         }
 
-        function toggleStatus(button) {
-            const row = button.closest('tr');
-            const statusCell = row.querySelector('.status');
-            const currentStatus = statusCell.innerText;
-
-            if (currentStatus === 'Active') {
-                statusCell.innerText = 'On Hold';
-                button.innerText = 'Activate';
-            } else {
-                statusCell.innerText = 'Active';
-                button.innerText = 'Put on Hold';
-            }
-
-            // Here you can send the updated status to your backend
-            const taskId = row.getAttribute('data-task-id');
-            console.log(Toggling Status of Task ${taskId}: New Status = ${statusCell.innerText});
-            // Make an API call to update the status in your database
+        function viewTask(file) {
+            // View logic, you can implement a modal to play video or show image
+            alert(Viewing: ${file.name});
         }
 
-        function deleteTask(button) {
-            const row = button.closest('tr');
-            const taskId = row.getAttribute('data-task-id');
-            row.remove();
+        function putOnHold(taskCard) {
+            taskCard.style.backgroundColor = '#f1f1f1';
+            taskCard.querySelectorAll('button').forEach(button => {
+                button.disabled = true;
+                button.classList.add('disabled');
+            });
+            alert(${taskCard.getAttribute('data-file-name')} is now on hold.);
+        }
 
-            // Here you can send a request to delete the task from your database
-            console.log(Deleting Task ${taskId});
-            // Make an API call to delete the task
+        function deleteTask(taskCard) {
+            taskList.removeChild(taskCard);
+            alert(${taskCard.getAttribute('data-file-name')} has been deleted.);
+        }
+
+        function adjustTask(taskCard) {
+            const views = prompt('Enter number of views allowed:');
+            const coins = prompt('Enter coins to reward:');
+            alert(Adjusted ${taskCard.getAttribute('data-file-name')} - Views: ${views}, Coins: ${coins});
         }
     </script>
-
 </body>
 </html>
