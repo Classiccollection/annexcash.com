@@ -3,33 +3,43 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>User Watch Ads</title>
+    <title>Staff Homepage</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         body {
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
-            background-color: #f7f7f7;
+            background-color: #f4f4f4;
         }
         .container {
-            padding: 20px;
-            max-width: 900px;
-            margin: 0 auto;
-        }
-        .video-item {
-            margin-bottom: 20px;
+            padding: 30px;
+            max-width: 1200px;
+            margin: auto;
             background-color: white;
-            padding: 15px;
-            border-radius: 5px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #333;
+        }
+        .section {
+            margin-bottom: 40px;
+        }
+        .section h2 {
+            margin-bottom: 15px;
+            color: #007bff;
         }
         button {
             background-color: #007bff;
             color: white;
-            padding: 10px 15px;
+            padding: 10px;
             border: none;
-            border-radius: 4px;
+            border-radius: 5px;
             cursor: pointer;
+            transition: background-color 0.3s;
         }
         button:hover {
             background-color: #0056b3;
@@ -37,14 +47,46 @@
         .alert {
             color: red;
             font-weight: bold;
+            text-align: center;
+            margin-top: 20px;
         }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h1>Watch Ads</h1>
-    <div id="videoList"></div>
+    <h1>Staff Homepage</h1>
+
+    <!-- Section for Adding Video Ads -->
+    <div class="section" id="addVideoAd">
+        <h2>Add Video Ad</h2>
+        <input type="text" id="videoTitle" placeholder="Video Title" required>
+        <input type="text" id="videoUrl" placeholder="Video URL" required>
+        <input type="text" id="videoThumbnail" placeholder="Thumbnail URL">
+        <input type="number" id="videoPoints" placeholder="Points Earned" required>
+        <input type="number" id="maxViews" placeholder="Max Views" required>
+        <button onclick="addVideoAd()">Add Video Ad</button>
+    </div>
+
+    <!-- Section for Viewing Registered Users -->
+    <div class="section" id="viewUsers">
+        <h2>Registered Users</h2>
+        <ul id="userList"></ul>
+    </div>
+
+    <!-- Section for Tracking User Earnings -->
+    <div class="section" id="trackEarnings">
+        <h2>Track User Earnings</h2>
+        <ul id="earningsList"></ul>
+    </div>
+
+    <!-- Section for Approving Withdrawals -->
+    <div class="section" id="approveWithdrawals">
+        <h2>Approve Withdrawals</h2>
+        <ul id="withdrawalList"></ul>
+    </div>
+
+    <!-- Alert Message -->
     <div class="alert" id="alertMessage"></div>
 </div>
 
@@ -65,73 +107,124 @@
     const app = firebase.initializeApp(firebaseConfig);
     const database = firebase.getDatabase(app);
 
-    // Simulated User ID (Replace with actual user authentication logic)
-    const userId = "sampleUserId"; // Replace this with the actual user ID after login
+    // Simulated Staff ID (Replace with actual staff authentication logic)
+    const staffId = "sampleStaffId"; // Replace with actual staff ID after login
 
-    // Load Videos from Firebase
-    function loadVideos() {
-        const videoList = document.getElementById('videoList');
-        videoList.innerHTML = ''; // Clear previous videos
+    // Function to add video ad
+    function addVideoAd() {
+        const title = document.getElementById('videoTitle').value;
+        const url = document.getElementById('videoUrl').value;
+        const thumbnail = document.getElementById('videoThumbnail').value;
+        const points = document.getElementById('videoPoints').value;
+        const maxViews = document.getElementById('maxViews').value;
 
-        // Fetch videos from Firebase (assumed structure: /videos)
+        const videoData = {
+            title: title,
+            src: url,
+            thumbnail: thumbnail,
+            points: Number(points),
+            maxViews: Number(maxViews),
+            views: 0
+        };
+
         const videoRef = firebase.ref(database, 'videos');
-        firebase.get(videoRef).then((snapshot) => {
+        firebase.push(videoRef, videoData).then(() => {
+            showAlert("Video ad added successfully!");
+            clearInputs();
+        }).catch((error) => {
+            console.error("Error adding video ad: ", error);
+        });
+    }
+
+    function clearInputs() {
+        document.getElementById('videoTitle').value = '';
+        document.getElementById('videoUrl').value = '';
+        document.getElementById('videoThumbnail').value = '';
+        document.getElementById('videoPoints').value = '';
+        document.getElementById('maxViews').value = '';
+    }
+
+    // Function to load registered users
+    function loadRegisteredUsers() {
+        const userList = document.getElementById('userList');
+        userList.innerHTML = ''; // Clear previous users
+
+        const userRef = firebase.ref(database, 'users');
+        firebase.get(userRef).then((snapshot) => {
             if (snapshot.exists()) {
-                const videos = snapshot.val();
-                for (const videoId in videos) {
-                    const video = videos[videoId];
-                    createVideoItem(video, videoId);
+                const users = snapshot.val();
+                for (const userId in users) {
+                    const user = users[userId];
+                    const listItem = document.createElement('li');
+                    listItem.textContent = User: ${user.username} (Email: ${user.email});
+                    userList.appendChild(listItem);
                 }
             } else {
-                videoList.innerHTML = '<p>No videos available.</p>';
+                userList.innerHTML = '<li>No registered users found.</li>';
             }
         }).catch((error) => {
-            console.error("Error fetching videos: ", error);
+            console.error("Error fetching users: ", error);
         });
     }
 
-    function createVideoItem(video, videoId) {
-        const videoItem = document.createElement('div');
-        videoItem.className = 'video-item';
-        videoItem.innerHTML = `
-            <h3>${video.title}</h3>
-            <video width="300" controls>
-                <source src="${video.src}" type="video/mp4">
-                Your browser does not support the video tag.
-            </video>
-            <p>Points: ${video.points}</p>
-            <p>Views: ${video.views}/${video.maxViews}</p>
-            <button onclick="watchVideo('${videoId}')">Watch</button>
-        `;
-        document.getElementById('videoList').appendChild(videoItem);
-    }
+    // Function to load user earnings
+    function loadUserEarnings() {
+        const earningsList = document.getElementById('earningsList');
+        earningsList.innerHTML = ''; // Clear previous earnings
 
-    function watchVideo(videoId) {
-        const videoRef = firebase.ref(database, 'videos/' + videoId);
-        firebase.get(videoRef).then((snapshot) => {
+        const earningsRef = firebase.ref(database, 'earnings');
+        firebase.get(earningsRef).then((snapshot) => {
             if (snapshot.exists()) {
-                const video = snapshot.val();
-                if (video.views < video.maxViews) {
-                    // Increment views in the database
-                    video.views++;
-                    firebase.update(videoRef, { views: video.views });
-
-                    // Simulate earning points
-                    earnPoints(video.points);
-                    showAlert(You have watched ${video.title}. You've earned ${video.points} points!);
-                } else {
-                    showAlert(You have reached the maximum views for ${video.title}.);
+                const earnings = snapshot.val();
+                for (const userId in earnings) {
+                    const earning = earnings[userId];
+                    const listItem = document.createElement('li');
+                    listItem.textContent = User: ${earning.username} - Earnings: ${earning.amount} Annex Coins;
+                    earningsList.appendChild(listItem);
                 }
+            } else {
+                earningsList.innerHTML = '<li>No earnings found.</li>';
             }
         }).catch((error) => {
-            console.error("Error watching video: ", error);
+            console.error("Error fetching earnings: ", error);
         });
     }
 
-    function earnPoints(points) {
-        // Implement logic to update user's coin balance in the database
-        // Example: updateUserBalance(points);
-        console.log(User earned ${points} points (this would update in DB).);
+    // Function to load withdrawal requests
+    function loadWithdrawals() {
+        const withdrawalList = document.getElementById('withdrawalList');
+        withdrawalList.innerHTML = ''; // Clear previous withdrawals
+
+        const withdrawalRef = firebase.ref(database, 'withdrawals');
+        firebase.get(withdrawalRef).then((snapshot) => {
+            if (snapshot.exists()) {
+                const withdrawals = snapshot.val();
+                for (const withdrawalId in withdrawals) {
+                    const withdrawal = withdrawals[withdrawalId];
+                    const listItem = document.createElement('li');
+                    listItem.textContent = `User: ${withdrawal.username} - Amount: ${withdrawal.amount} Annex Coins `;
+                    const approveButton = document.createElement('button');
+                    approveButton.textContent = 'Approve';
+                    approveButton.onclick = () => approveWithdrawal(withdrawalId);
+                    listItem.appendChild(approveButton);
+                    withdrawalList.appendChild(listItem);
+                }
+            } else {
+                withdrawalList.innerHTML = '<li>No withdrawal requests found.</li>';
+            }
+        }).catch((error) => {
+            console.error("Error fetching withdrawals: ", error);
+        });
+    }
+
+    function approveWithdrawal(withdrawalId) {
+        const withdrawalRef = firebase.ref(database, 'withdrawals/' + withdrawalId);
+        firebase.remove(withdrawalRef).then(() => {
+            showAlert("Withdrawal approved successfully!");
+            loadWithdrawals(); // Refresh the withdrawal list
+        }).catch((error) => {
+            console.error("Error approving withdrawal: ", error);
+        });
     }
 
     function showAlert(message) {
@@ -142,8 +235,12 @@
         }, 3000);
     }
 
-    // Load videos on page load
-    loadVideos();
+    // Load registered users, user earnings, and withdrawals on page load
+    window.onload = function() {
+        loadRegisteredUsers();
+        loadUserEarnings();
+        loadWithdrawals();
+    }
 </script>
 
 </body>
