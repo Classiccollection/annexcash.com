@@ -3,67 +3,76 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Staff Admin Panel - Annex Cash</title>
+    <title>Annex Cash - Staff Dashboard</title>
     <link rel="stylesheet" href="styles.css">
-    <!-- Import Firebase App and Firestore SDKs -->
+    <!-- Import Firebase App and Services -->
     <script type="module" src="https://www.gstatic.com/firebasejs/9.14.0/firebase-app.js"></script>
     <script type="module" src="https://www.gstatic.com/firebasejs/9.14.0/firebase-auth.js"></script>
     <script type="module" src="https://www.gstatic.com/firebasejs/9.14.0/firebase-firestore.js"></script>
+    <script type="module" src="https://www.gstatic.com/firebasejs/9.14.0/firebase-storage.js"></script>
 </head>
 <body>
     <div class="staff-wrapper">
         <header class="staff-header">
             <h1>Annex Cash Staff Portal</h1>
-            <p>Manage ads, surveys, games, and user accounts here.</p>
-            <button id="logout-btn" class="logout-btn">Logout</button>
+            <p>Manage platform content and users</p>
         </header>
 
-        <div class="staff-container">
-            <!-- Section to Add Ads, Surveys, and Games -->
-            <section id="manage-content">
-                <h2>Add Video Ads, Games, Surveys</h2>
-                <form id="add-content-form">
-                    <div class="form-group">
-                        <label for="content-type">Content Type</label>
-                        <select id="content-type" name="content-type" required>
-                            <option value="ad">Video Ad</option>
-                            <option value="game">Game</option>
-                            <option value="survey">Survey</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="content-url">Content URL</label>
-                        <input type="url" id="content-url" name="content-url" required>
-                    </div>
-                    <button type="submit" class="add-btn">Add Content</button>
+        <div class="staff-dashboard">
+            <!-- Section: Add Video Ads -->
+            <section class="video-ads-section">
+                <h2>Video Ads Management</h2>
+                <form id="video-upload-form">
+                    <label for="video-upload">Upload Video Ad:</label>
+                    <input type="file" id="video-upload" accept="video/*" required>
+                    <button type="submit">Upload Video</button>
                 </form>
+                <div id="video-ads-list"></div>
             </section>
 
-            <!-- Section to View User Accounts and Statistics -->
-            <section id="user-statistics">
+            <!-- Section: Surveys Management -->
+            <section class="surveys-section">
+                <h2>Surveys Management</h2>
+                <form id="survey-form">
+                    <label for="survey-link">Add Survey Link:</label>
+                    <input type="url" id="survey-link" placeholder="https://example.com/survey" required>
+                    <button type="submit">Add Survey</button>
+                </form>
+                <div id="surveys-list"></div>
+            </section>
+
+            <!-- Section: Manage User Accounts -->
+            <section class="user-management-section">
                 <h2>User Accounts & Earnings</h2>
-                <div id="user-list">
-                    <!-- User accounts and earnings stats will be populated here dynamically -->
-                </div>
-            </section>
-
-            <!-- Section to Handle Withdrawal Requests -->
-            <section id="withdraw-requests">
-                <h2>Withdrawal Requests</h2>
-                <div id="withdraw-list">
-                    <!-- Withdrawal requests will be populated here dynamically -->
-                </div>
+                <table id="user-table">
+                    <thead>
+                        <tr>
+                            <th>Email</th>
+                            <th>Earnings</th>
+                            <th>Tasks Completed</th>
+                            <th>Withdrawals</th>
+                            <th>Referrals</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- User data will be dynamically inserted here -->
+                    </tbody>
+                </table>
             </section>
         </div>
+
+        <footer class="footer">
+            <p>© 2024 Annex Cash. All rights reserved.</p>
+        </footer>
     </div>
 
-    <footer class="footer">
-        <p>© 2024 Annex Cash. All rights reserved.</p>
-    </footer>
-
-    <!-- Firebase Configuration -->
     <script type="module">
-        // Your Firebase configuration
+        // Firebase configuration and initialization
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.14.0/firebase-app.js";
+        import { getFirestore, collection, addDoc, getDocs, doc, deleteDoc, updateDoc } from "https://www.gstatic.com/firebasejs/9.14.0/firebase-firestore.js";
+        import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/9.14.0/firebase-storage.js";
+
         const firebaseConfig = {
             apiKey: "AIzaSyD9NdDm3P26coUMtvQ_Rs88ylZX6tu_968",
             authDomain: "annex-cash.firebaseapp.com",
@@ -73,93 +82,83 @@
             appId: "1:787593405771:web:80e357dcc861741b7fb4ce"
         };
 
-        // Initialize Firebase
-        const app = firebase.initializeApp(firebaseConfig);
-        const auth = firebase.getAuth(app);
-        const db = firebase.getFirestore(app);
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const storage = getStorage(app);
 
-        // Handle Logout
-        document.getElementById('logout-btn').addEventListener('click', () => {
-            firebase.signOut(auth).then(() => {
-                window.location.href = 'staff-login.html'; // Redirect to staff login page
-            }).catch((error) => {
-                alert(Error: ${error.message});
-            });
-        });
-
-        // Add Content (Ads, Games, Surveys)
-        document.getElementById('add-content-form').addEventListener('submit', async (event) => {
-            event.preventDefault(); // Prevent default form submission
-            const contentType = document.getElementById('content-type').value;
-            const contentUrl = document.getElementById('content-url').value;
-
+        // Video Ads Upload Functionality
+        document.getElementById('video-upload-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const file = document.getElementById('video-upload').files[0];
+            const storageRef = ref(storage, 'videos/' + file.name);
             try {
-                // Save content to Firestore
-                await firebase.addDoc(firebase.collection(db, "content"), {
-                    type: contentType,
-                    url: contentUrl,
-                    addedAt: firebase.serverTimestamp()
-                });
-                alert('Content added successfully!');
-                document.getElementById('add-content-form').reset();
+                await uploadBytes(storageRef, file);
+                const videoURL = await getDownloadURL(storageRef);
+                alert('Video uploaded successfully!');
+                document.getElementById('video-ads-list').innerHTML += <p>Uploaded: <a href="${videoURL}" target="_blank">${file.name}</a></p>;
             } catch (error) {
-                alert(Error adding content: ${error.message});
+                console.error('Error uploading video:', error);
             }
         });
 
-        // Load User Accounts and Earnings Statistics
-        const loadUserAccounts = async () => {
-            const usersSnapshot = await firebase.getDocs(firebase.collection(db, "users"));
-            const userList = document.getElementById('user-list');
-            userList.innerHTML = ''; // Clear existing users
+        // Add Survey Links to Firestore
+        document.getElementById('survey-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const surveyLink = document.getElementById('survey-link').value;
+            try {
+                await addDoc(collection(db, 'surveys'), {
+                    link: surveyLink,
+                    status: 'active'
+                });
+                alert('Survey link added successfully!');
+                document.getElementById('surveys-list').innerHTML += <p>Survey: <a href="${surveyLink}" target="_blank">${surveyLink}</a></p>;
+            } catch (error) {
+                console.error('Error adding survey:', error);
+            }
+        });
 
-            usersSnapshot.forEach((doc) => {
+        // Fetch and Display User Accounts from Firestore
+        const userTableBody = document.getElementById('user-table').getElementsByTagName('tbody')[0];
+
+        async function loadUsers() {
+            const querySnapshot = await getDocs(collection(db, 'users'));
+            querySnapshot.forEach((doc) => {
                 const userData = doc.data();
-                const userItem = document.createElement('div');
-                userItem.classList.add('user-item');
-                userItem.innerHTML = `
-                    <p><strong>${userData.email}</strong></p>
-                    <p>Total Earned: ${userData.totalEarnings} Annex Coins</p>
-                `;
-                userList.appendChild(userItem);
-            });
-        };
-
-        loadUserAccounts(); // Load users on page load
-
-        // Load Withdrawal Requests
-        const loadWithdrawRequests = async () => {
-            const withdrawSnapshot = await firebase.getDocs(firebase.collection(db, "withdrawRequests"));
-            const withdrawList = document.getElementById('withdraw-list');
-            withdrawList.innerHTML = ''; // Clear existing requests
-
-            withdrawSnapshot.forEach((doc) => {
-                const requestData = doc.data();
-                const requestItem = document.createElement('div');
-                requestItem.classList.add('withdraw-item');
-                requestItem.innerHTML = `
-                    <p><strong>${requestData.email}</strong></p>
-                    <p>Requested Amount: ${requestData.amount} Annex Coins</p>
-                    <button class="approve-btn" data-id="${doc.id}">Approve</button>
-                `;
-                withdrawList.appendChild(requestItem);
+                const row = userTableBody.insertRow();
+                row.innerHTML = `
+                    <td>${userData.email}</td>
+                    <td>${userData.earnings}</td>
+                    <td>${userData.completedTasks}</td>
+                    <td>${userData.withdrawals}</td>
+                    <td>${userData.referrals}</td>
+                    <td>
+                        <button class="view-user" data-id="${doc.id}">View</button>
+                        <button class="delete-user" data-id="${doc.id}">Delete</button>
+                    </td>`;
             });
 
-            // Add click event listeners to Approve buttons
-            document.querySelectorAll('.approve-btn').forEach(button => {
-                button.addEventListener('click', async (event) => {
-                    const requestId = event.target.getAttribute('data-id');
-                    // Mark withdrawal request as approved
-                    await firebase.updateDoc(firebase.doc(db, 'withdrawRequests', requestId), {
-                        status: 'approved'
-                    });
-                    alert('Withdrawal approved!');
-                    loadWithdrawRequests(); // Reload requests after approval
+            // Add event listeners for "Delete" buttons
+            document.querySelectorAll('.delete-user').forEach(button => {
+                button.addEventListener('click', async (e) => {
+                    const userId = e.target.dataset.id;
+                    await deleteDoc(doc(db, 'users', userId));
+                    alert('User deleted successfully!');
+                    e.target.closest('tr').remove();
                 });
             });
-        };
 
-        loadWithdrawRequests(); // Load withdrawal requests on page load
+            // Add event listeners for "View" buttons (Optional: Detailed View)
+            document.querySelectorAll('.view-user').forEach(button => {
+                button.addEventListener('click', (e) => {
+                    const userId = e.target.dataset.id;
+                    // Here you can add logic to open a detailed user info modal
+                    alert(View details for user: ${userId});
+                });
+            });
+        }
+
+        // Load user data on page load
+        loadUsers();
     </script>
 </body>
 </html>
