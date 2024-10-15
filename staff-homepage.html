@@ -21,182 +21,220 @@
 
         .container {
             padding: 20px;
-            max-width: 800px;
+            max-width: 900px;
             margin: 0 auto;
         }
 
-        .upload-area {
-            border: 2px dashed #007bff;
-            border-radius: 8px;
+        .section {
+            margin-bottom: 40px;
+            background-color: white;
             padding: 20px;
-            text-align: center;
-            margin-bottom: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
         }
 
-        .upload-area:hover {
-            background-color: #e9ecef;
+        h3 {
+            margin-bottom: 10px;
         }
 
-        .upload-input {
-            display: none;
+        input[type="text"], input[type="number"], input[type="file"] {
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0 15px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        button {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
         }
 
         .task-list {
             margin-top: 20px;
         }
 
-        .task-card {
-            background-color: white;
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 10px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-        }
-
-        .button {
-            background-color: #007bff;
-            color: white;
-            padding: 5px 10px;
-            text-decoration: none;
+        .task-item {
+            padding: 10px;
+            margin-bottom: 15px;
+            background-color: #e9ecef;
             border-radius: 5px;
+        }
+
+        .task-item h4 {
+            margin: 0;
+        }
+
+        .task-item button {
             margin-right: 5px;
-        }
-
-        .button:hover {
-            background-color: #0056b3;
-        }
-
-        .disabled {
-            background-color: #ccc;
-            cursor: not-allowed;
         }
     </style>
 </head>
 <body>
 
-    <header>
-        <h1>Staff Homepage</h1>
-    </header>
+<header>
+    <h1>Annex Cash Staff Homepage</h1>
+</header>
 
-    <div class="container">
-        <div class="upload-area" id="upload-area">
-            <h3>Upload Video or Ad</h3>
-            <select id="task-type" class="upload-input">
-                <option value="video">Video Ad</option>
-                <option value="image">Image Ad</option>
-                <option value="survey">Survey Task</option>
-                <option value="game">Game Task</option>
-            </select>
-            <input type="file" id="file-input" accept="video/,image/" multiple class="upload-input">
-            <button id="file-upload-button" onclick="document.getElementById('file-input').click();">Choose Files</button>
-            <p>Drag and drop files here or click to select</p>
-        </div>
+<div class="container">
 
-        <div id="task-list" class="task-list">
-            <h3>Uploaded Tasks</h3>
-            <!-- Uploaded tasks will be displayed here -->
-        </div>
+    <!-- Videos Section -->
+    <div class="section">
+        <h3>Add Video Task</h3>
+        <input type="file" id="videoUpload" accept="video/*" />
+        <input type="text" id="videoPoints" placeholder="Points Awarded" />
+        <input type="number" id="maxVideoViews" placeholder="Max Views" />
+        <button onclick="uploadVideoTask()">Upload Video Task</button>
+        
+        <div class="task-list" id="videoTaskList"></div>
     </div>
 
-    <footer>
-        <p>&copy; 2024 Annex Cash. All rights reserved.</p>
-    </footer>
+    <!-- Surveys Section -->
+    <div class="section">
+        <h3>Add Survey Task</h3>
+        <input type="text" id="surveyLink" placeholder="Survey Link" />
+        <input type="text" id="surveyPoints" placeholder="Points Awarded" />
+        <input type="number" id="maxSurveyViews" placeholder="Max Views" />
+        <button onclick="uploadSurveyTask()">Upload Survey Task</button>
+        
+        <div class="task-list" id="surveyTaskList"></div>
+    </div>
 
-    <script>
-        const taskList = document.getElementById('task-list');
-        const uploadArea = document.getElementById('upload-area');
-        const fileInput = document.getElementById('file-input');
-        const taskType = document.getElementById('task-type');
+    <!-- Games Section -->
+    <div class="section">
+        <h3>Add Game Task</h3>
+        <input type="text" id="gameLink" placeholder="Game Link" />
+        <input type="text" id="gamePoints" placeholder="Points Awarded" />
+        <input type="number" id="maxGamePlays" placeholder="Max Plays" />
+        <button onclick="uploadGameTask()">Upload Game Task</button>
+        
+        <div class="task-list" id="gameTaskList"></div>
+    </div>
+</div>
 
-        // Handle drag-and-drop
-        uploadArea.addEventListener('dragover', (e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            uploadArea.style.backgroundColor = '#e9ecef';
+<script>
+    // Array to hold task information (this would typically be fetched from Firebase)
+    const videoTasks = [];
+    const surveyTasks = [];
+    const gameTasks = [];
+
+    function uploadVideoTask() {
+        const videoFile = document.getElementById('videoUpload').files[0];
+        const points = document.getElementById('videoPoints').value;
+        const maxViews = document.getElementById('maxVideoViews').value;
+
+        if (videoFile && points && maxViews) {
+            const task = { videoFile, points, maxViews, views: 0 };
+            videoTasks.push(task);
+            updateTaskList('video', videoTasks);
+        } else {
+            alert("Please fill in all fields.");
+        }
+    }
+
+    function uploadSurveyTask() {
+        const link = document.getElementById('surveyLink').value;
+        const points = document.getElementById('surveyPoints').value;
+        const maxViews = document.getElementById('maxSurveyViews').value;
+
+        if (link && points && maxViews) {
+            const task = { link, points, maxViews, views: 0 };
+            surveyTasks.push(task);
+            updateTaskList('survey', surveyTasks);
+        } else {
+            alert("Please fill in all fields.");
+        }
+    }
+
+    function uploadGameTask() {
+        const link = document.getElementById('gameLink').value;
+        const points = document.getElementById('gamePoints').value;
+        const maxPlays = document.getElementById('maxGamePlays').value;
+
+        if (link && points && maxPlays) {
+            const task = { link, points, maxPlays, plays: 0 };
+            gameTasks.push(task);
+            updateTaskList('game', gameTasks);
+        } else {
+            alert("Please fill in all fields.");
+        }
+    }
+
+    function updateTaskList(type, tasks) {
+        const taskListId = type === 'video' ? 'videoTaskList' : type === 'survey' ? 'surveyTaskList' : 'gameTaskList';
+        const taskList = document.getElementById(taskListId);
+        taskList.innerHTML = ''; // Clear the existing list
+
+        tasks.forEach((task, index) => {
+            const taskItem = document.createElement('div');
+            taskItem.className = 'task-item';
+            taskItem.innerHTML = `
+                <h4>${type.charAt(0).toUpperCase() + type.slice(1)} Task</h4>
+                ${type === 'video' ? '<video width="200" controls><source src="' + URL.createObjectURL(task.videoFile) + '" type="video/mp4">Your browser does not support the video tag.</video>' : ''}
+                <p>Points Awarded: ${task.points}</p>
+                <p>Max Views: ${task.maxViews || task.maxPlays}</p>
+                <button onclick="deleteTask('${type}', ${index})">Delete</button>
+                <button onclick="putOnHold('${type}', ${index})">Put on Hold</button>
+                <button onclick="adjustTask('${type}', ${index})">Adjust</button>
+            `;
+            taskList.appendChild(taskItem);
         });
+    }
 
-        uploadArea.addEventListener('dragleave', () => {
-            uploadArea.style.backgroundColor = '';
-        });
+    function deleteTask(type, index) {
+        if (type === 'video') {
+            videoTasks.splice(index, 1);
+            updateTaskList('video', videoTasks);
+        } else if (type === 'survey') {
+            surveyTasks.splice(index, 1);
+            updateTaskList('survey', surveyTasks);
+        } else {
+            gameTasks.splice(index, 1);
+            updateTaskList('game', gameTasks);
+        }
+    }
 
-        uploadArea.addEventListener('drop', (e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            uploadArea.style.backgroundColor = '';
+    function putOnHold(type, index) {
+        // Logic to put task on hold (could change a status flag in a real application)
+        alert(type.charAt(0).toUpperCase() + type.slice(1) + " task is now on hold.");
+    }
 
-            const files = e.dataTransfer.files;
-            handleFiles(files);
-        });
+    function adjustTask(type, index) {
+        // Logic to adjust points and views (implement a modal for this in a real app)
+        const newPoints = prompt("Enter new points for the task:", type === 'video' ? videoTasks[index].points : type === 'survey' ? surveyTasks[index].points : gameTasks[index].points);
+        const newMaxViews = prompt("Enter new maximum views:", type === 'video' ? videoTasks[index].maxViews : type === 'survey' ? surveyTasks[index].maxViews : gameTasks[index].maxPlays);
 
-        fileInput.addEventListener('change', (e) => {
-            const files = e.target.files;
-            handleFiles(files);
-        });
-
-        function handleFiles(files) {
-            Array.from(files).forEach(file => {
-                const taskCard = document.createElement('div');
-                taskCard.className = 'task-card';
-                taskCard.setAttribute('data-file-name', file.name);
-
-                const taskTitle = document.createElement('h4');
-                taskTitle.innerText = file.name;
-                taskCard.appendChild(taskTitle);
-
-                // Add buttons for managing tasks
-                const viewButton = document.createElement('button');
-                viewButton.innerText = 'View';
-                viewButton.className = 'button';
-                viewButton.onclick = () => viewTask(file);
-
-                const holdButton = document.createElement('button');
-                holdButton.innerText = 'Put on Hold';
-                holdButton.className = 'button';
-                holdButton.onclick = () => putOnHold(taskCard);
-
-                const deleteButton = document.createElement('button');
-                deleteButton.innerText = 'Delete';
-                deleteButton.className = 'button';
-                deleteButton.onclick = () => deleteTask(taskCard);
-
-                const adjustButton = document.createElement('button');
-                adjustButton.innerText = 'Adjust Views & Coins';
-                adjustButton.className = 'button';
-                adjustButton.onclick = () => adjustTask(taskCard);
-
-                taskCard.appendChild(viewButton);
-                taskCard.appendChild(holdButton);
-                taskCard.appendChild(deleteButton);
-                taskCard.appendChild(adjustButton);
-
-                taskList.appendChild(taskCard);
-            });
+        if (newPoints !== null) {
+            if (type === 'video') {
+                videoTasks[index].points = newPoints;
+            } else if (type === 'survey') {
+                surveyTasks[index].points = newPoints;
+            } else {
+                gameTasks[index].points = newPoints;
+            }
         }
 
-        function viewTask(file) {
-            // View logic, you can implement a modal to play video or show image
-            alert(Viewing: ${file.name});
+        if (newMaxViews !== null) {
+            if (type === 'video') {
+                videoTasks[index].maxViews = newMaxViews;
+            } else if (type === 'survey') {
+                surveyTasks[index].maxViews = newMaxViews;
+            } else {
+                gameTasks[index].maxPlays = newMaxViews;
+            }
         }
 
-        function putOnHold(taskCard) {
-            taskCard.style.backgroundColor = '#f1f1f1';
-            taskCard.querySelectorAll('button').forEach(button => {
-                button.disabled = true;
-                button.classList.add('disabled');
-            });
-            alert(${taskCard.getAttribute('data-file-name')} is now on hold.);
-        }
+        updateTaskList(type, type === 'video' ? videoTasks : type === 'survey' ? surveyTasks : gameTasks);
+    }
+</script>
 
-        function deleteTask(taskCard) {
-            taskList.removeChild(taskCard);
-            alert(${taskCard.getAttribute('data-file-name')} has been deleted.);
-        }
-
-        function adjustTask(taskCard) {
-            const views = prompt('Enter number of views allowed:');
-            const coins = prompt('Enter coins to reward:');
-            alert(Adjusted ${taskCard.getAttribute('data-file-name')} - Views: ${views}, Coins: ${coins});
-        }
-    </script>
 </body>
 </html>
