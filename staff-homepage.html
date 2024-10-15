@@ -1,257 +1,119 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Annex Cash - Staff Homepage</title>
-    <style>
-        /* General Styles for Desktop */
-        body, html {
-            margin: 0;
-            padding: 0;
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-        }
+// Import Firebase functions
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.14.0/firebase-auth.js";
+import { getFirestore, collection, addDoc, onSnapshot, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/9.14.0/firebase-firestore.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.14.0/firebase-app.js";
 
-        .container {
-            width: 80%;
-            margin: 0 auto;
-        }
+// Your web app's Firebase configuration
+const firebaseConfig = {
+    apiKey: "AIzaSyD9NdDm3P26coUMtvQ_Rs88ylZX6tu_968",
+    authDomain: "annex-cash.firebaseapp.com",
+    projectId: "annex-cash",
+    storageBucket: "annex-cash.appspot.com",
+    messagingSenderId: "787593405771",
+    appId: "1:787593405771:web:80e357dcc861741b7fb4ce"
+};
 
-        header {
-            background-color: #4CAF50;
-            color: white;
-            text-align: center;
-            padding: 10px 0;
-        }
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
 
-        h1, h2 {
-            margin: 0;
-            padding: 10px;
-        }
-
-        .upload-container, .task-list {
-            background-color: white;
-            margin: 20px 0;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-        }
-
-        /* Desktop Layout */
-        @media (min-width: 768px) {
-            .login-container, .upload-container {
-                width: 50%;
-                margin: 50px auto;
-                padding: 20px;
-                border: 1px solid #ccc;
-                box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-            }
-
-            .task-list, .video-list, .survey-list, .game-list {
-                display: flex;
-                flex-wrap: wrap;
-                justify-content: space-between;
-            }
-
-            .task-item, .video-item, .survey-item, .game-item {
-                width: 45%;
-                margin: 10px 0;
-                padding: 10px;
-                background-color: #f9f9f9;
-                border: 1px solid #ddd;
-                border-radius: 5px;
-            }
-        }
-
-        /* Mobile Layout */
-        @media (max-width: 767px) {
-            .login-container, .upload-container {
-                width: 90%;
-                margin: 20px auto;
-                padding: 15px;
-                border: 1px solid #ccc;
-            }
-
-            .task-item, .video-item, .survey-item, .game-item {
-                width: 100%;
-                margin: 10px 0;
-                padding: 10px;
-                background-color: #f9f9f9;
-                border: 1px solid #ddd;
-                border-radius: 5px;
-            }
-
-            .upload-container h2, .login-container h2 {
-                font-size: 1.5rem;
-            }
-
-            .footer {
-                font-size: 0.8rem;
-                padding: 10px;
-            }
-        }
-
-        /* Button Styles */
-        button {
-            padding: 10px 20px;
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            cursor: pointer;
-            border-radius: 5px;
-        }
-
-        button:hover {
-            background-color: #45a049;
-        }
-
-        /* Video/Task Lists */
-        .video-list, .survey-list, .game-list {
-            list-style-type: none;
-            padding: 0;
-        }
-
-        .video-item, .survey-item, .game-item {
-            background-color: #e0e0e0;
-            padding: 10px;
-            margin: 10px 0;
-            border-radius: 5px;
-        }
-
-        .delete-btn {
-            background-color: red;
-            color: white;
-            padding: 5px 10px;
-            border: none;
-            cursor: pointer;
-            margin-top: 10px;
-            border-radius: 3px;
-        }
-
-        .delete-btn:hover {
-            background-color: darkred;
-        }
-    </style>
-</head>
-<body>
-
-<header>
-    <h1>Annex Cash - Staff Dashboard</h1>
-</header>
-
-<div class="container">
-    <!-- Upload Videos Section -->
-    <div class="upload-container">
-        <h2>Upload Videos</h2>
-        <input type="file" id="video-upload" accept="video/*">
-        <button id="upload-video-btn">Upload Video</button>
-    </div>
-
-    <!-- Uploaded Videos List -->
-    <div class="task-list">
-        <h2>Uploaded Videos</h2>
-        <ul class="video-list" id="video-list">
-            <!-- Uploaded videos will be listed here -->
-        </ul>
-    </div>
-
-    <!-- Upload Surveys Section -->
-    <div class="upload-container">
-        <h2>Upload Surveys</h2>
-        <input type="text" id="survey-url" placeholder="Survey URL">
-        <button id="upload-survey-btn">Upload Survey</button>
-    </div>
-
-    <!-- Uploaded Surveys List -->
-    <div class="task-list">
-        <h2>Uploaded Surveys</h2>
-        <ul class="survey-list" id="survey-list">
-            <!-- Uploaded surveys will be listed here -->
-        </ul>
-    </div>
-
-    <!-- Upload Games Section -->
-    <div class="upload-container">
-        <h2>Upload Games</h2>
-        <input type="text" id="game-url" placeholder="Game URL">
-        <button id="upload-game-btn">Upload Game</button>
-    </div>
-
-    <!-- Uploaded Games List -->
-    <div class="task-list">
-        <h2>Uploaded Games</h2>
-        <ul class="game-list" id="game-list">
-            <!-- Uploaded games will be listed here -->
-        </ul>
-    </div>
-</div>
-
-<footer class="footer">
-    <p>© 2024 Annex Cash. All rights reserved.</p>
-</footer>
-
-<script>
-    // Function to create delete button functionality
-    function createDeleteButton(itemList, itemElement) {
-        const deleteBtn = itemElement.querySelector('.delete-btn');
-        deleteBtn.addEventListener('click', () => {
-            itemList.removeChild(itemElement);
-        });
-    }
-
-    document.getElementById('upload-video-btn').addEventListener('click', () => {
-        const videoName = document.getElementById('video-upload').files[0]?.name || 'New Video';
-        if (videoName) {
-            const videoList = document.getElementById('video-list');
-            const newVideo = document.createElement('li');
-            newVideo.classList.add('video-item');
-            newVideo.innerHTML = ${videoName} <button class="delete-btn">Delete</button>;
-            videoList.appendChild(newVideo);
-            createDeleteButton(videoList, newVideo); // Add delete functionality
-        }
-    });
-
-    document.getElementById('upload-survey-btn').addEventListener('click', () => {
-        const surveyURL = document.getElementById('survey-url').value || 'New Survey';
-        if (surveyURL) {
-            const surveyList = document.getElementById('survey-list');
-            const newSurvey = document.createElement('li');
-            newSurvey.classList.add('survey-item');
-            newSurvey.innerHTML = ${surveyURL} <button class="delete-btn">Delete</button>;
-            surveyList.appendChild(newSurvey);
-            createDeleteButton(surveyList, newSurvey); // Add delete functionality
-        }
-    });
-
-    document.getElementById('upload-game-btn').addEventListener('click', () => {
-        const gameURL = document.getElementById('game-url').value || 'New Game';
-        if (gameURL) {
-            const gameList = document.getElementById('game-list');
-            const newGame = document.createElement('li');
-            newGame.classList.add('game-item');
-            newGame.innerHTML = ${gameURL} <button class="delete-btn">Delete</button>;
-            gameList.appendChild(newGame);
-            createDeleteButton(gameList, newGame); // Add delete functionality
-        }
-    });
-</script>
-    // Import Firebase and initialize
-import { getAuth, onAuthStateChanged } from 'firebase/auth';
-
-// Initialize Firebase Auth
-const auth = getAuth();
-
-// Check user authentication status
+// Check if user is logged in
 onAuthStateChanged(auth, (user) => {
-    if (user) {
-        // User is signed in, proceed to show the page
-        console.log('User is logged in:', user);
+    if (!user) {
+        alert("You must be logged in to access this page.");
+        window.location.href = "login.html"; // Redirect to login page if not logged in
     } else {
-        // No user is signed in, redirect to the login page
-        window.location.href = 'login.html'; // Change to your login page URL
+        loadUploadedData(); // Load uploaded data if logged in
     }
 });
 
+// Load uploaded videos, surveys, and games from Firestore
+function loadUploadedData() {
+    const videoList = document.getElementById('video-list');
+    const surveyList = document.getElementById('survey-list');
+    const gameList = document.getElementById('game-list');
+
+    onSnapshot(collection(db, "videos"), (snapshot) => {
+        videoList.innerHTML = ''; // Clear existing videos
+        snapshot.forEach((doc) => {
+            const li = document.createElement('li');
+            li.classList.add('video-item');
+            li.innerHTML = ${doc.data().name} <button class="delete-btn" data-id="${doc.id}">Delete</button>;
+            videoList.appendChild(li);
+            createDeleteButton(videoList, li, doc.id, "videos"); // Pass collection name
+        });
+    });
+
+    onSnapshot(collection(db, "surveys"), (snapshot) => {
+        surveyList.innerHTML = ''; // Clear existing surveys
+        snapshot.forEach((doc) => {
+            const li = document.createElement('li');
+            li.classList.add('survey-item');
+            li.innerHTML = ${doc.data().url} <button class="delete-btn" data-id="${doc.id}">Delete</button>;
+            surveyList.appendChild(li);
+            createDeleteButton(surveyList, li, doc.id, "surveys"); // Pass collection name
+        });
+    });
+
+    onSnapshot(collection(db, "games"), (snapshot) => {
+        gameList.innerHTML = ''; // Clear existing games
+        snapshot.forEach((doc) => {
+            const li = document.createElement('li');
+            li.classList.add('game-item');
+            li.innerHTML = ${doc.data().url} <button class="delete-btn" data-id="${doc.id}">Delete</button>;
+            gameList.appendChild(li);
+            createDeleteButton(gameList, li, doc.id, "games"); // Pass collection name
+        });
+    });
+}
+
+// Function to handle delete button
+function createDeleteButton(itemList, itemElement, id, collectionName) {
+    const deleteBtn = itemElement.querySelector('.delete-btn');
+    deleteBtn.addEventListener('click', async () => {
+        await deleteDoc(doc(db, collectionName, id)); // Delete from Firestore based on collection
+        itemList.removeChild(itemElement); // Remove from DOM
+    });
+}
+
+// Video upload handler
+document.getElementById('upload-video-btn').addEventListener('click', async () => {
+    const videoFile = document.getElementById('video-upload').files[0];
+    if (videoFile) {
+        const videoName = videoFile.name;
+        // Upload video to Firestore
+        await addDoc(collection(db, "videos"), {
+            name: videoName,
+            timestamp: new Date()
+        });
+        alert('Video uploaded successfully!');
+    }
+});
+
+// Survey upload handler
+document.getElementById('upload-survey-btn').addEventListener('click', async () => {
+    const surveyURL = document.getElementById('survey-url').value;
+    if (surveyURL) {
+        await addDoc(collection(db, "surveys"), {
+            url: surveyURL,
+            timestamp: new Date()
+        });
+        alert('Survey uploaded successfully!');
+    }
+});
+
+// Game upload handler
+document.getElementById('upload-game-btn').addEventListener('click', async () => {
+    const gameURL = document.getElementById('game-url').value;
+    if (gameURL) {
+        await addDoc(collection(db, "games"), {
+            url: gameURL,
+            timestamp: new Date()
+        });
+        alert('Game uploaded successfully!');
+    }
+});
+</script>
 </body>
 </html>
