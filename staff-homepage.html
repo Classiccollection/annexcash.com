@@ -3,162 +3,140 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Annex Cash - Staff Dashboard</title>
-    <link rel="stylesheet" href="styles.css">
-    <!-- Import Firebase App and Services -->
-    <script type="module" src="https://www.gstatic.com/firebasejs/9.14.0/firebase-app.js"></script>
-    <script type="module" src="https://www.gstatic.com/firebasejs/9.14.0/firebase-auth.js"></script>
-    <script type="module" src="https://www.gstatic.com/firebasejs/9.14.0/firebase-firestore.js"></script>
-    <script type="module" src="https://www.gstatic.com/firebasejs/9.14.0/firebase-storage.js"></script>
+    <title>Staff Dashboard - Annex Cash</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f7f7f7;
+        }
+        header {
+            background-color: #4b3621;
+            color: white;
+            padding: 10px 20px;
+            text-align: center;
+        }
+        .container {
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .task-list {
+            margin-top: 20px;
+            border-collapse: collapse;
+            width: 100%;
+        }
+        .task-list th, .task-list td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: center;
+        }
+        .task-list th {
+            background-color: #4b3621;
+            color: white;
+        }
+        .button {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 15px;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+        .button:hover {
+            background-color: #0056b3;
+        }
+        .edit-input {
+            width: 80px;
+        }
+    </style>
 </head>
 <body>
-    <div class="staff-wrapper">
-        <header class="staff-header">
-            <h1>Annex Cash Staff Portal</h1>
-            <p>Manage platform content and users</p>
-        </header>
 
-        <div class="staff-dashboard">
-            <!-- Section: Add Video Ads -->
-            <section class="video-ads-section">
-                <h2>Video Ads Management</h2>
-                <form id="video-upload-form">
-                    <label for="video-upload">Upload Video Ad:</label>
-                    <input type="file" id="video-upload" accept="video/*" required>
-                    <button type="submit">Upload Video</button>
-                </form>
-                <div id="video-ads-list"></div>
-            </section>
+    <header>
+        <h1>Staff Dashboard</h1>
+    </header>
 
-            <!-- Section: Surveys Management -->
-            <section class="surveys-section">
-                <h2>Surveys Management</h2>
-                <form id="survey-form">
-                    <label for="survey-link">Add Survey Link:</label>
-                    <input type="url" id="survey-link" placeholder="https://example.com/survey" required>
-                    <button type="submit">Add Survey</button>
-                </form>
-                <div id="surveys-list"></div>
-            </section>
-
-            <!-- Section: Manage User Accounts -->
-            <section class="user-management-section">
-                <h2>User Accounts & Earnings</h2>
-                <table id="user-table">
-                    <thead>
-                        <tr>
-                            <th>Email</th>
-                            <th>Earnings</th>
-                            <th>Tasks Completed</th>
-                            <th>Withdrawals</th>
-                            <th>Referrals</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <!-- User data will be dynamically inserted here -->
-                    </tbody>
-                </table>
-            </section>
-        </div>
-
-        <footer class="footer">
-            <p>© 2024 Annex Cash. All rights reserved.</p>
-        </footer>
+    <div class="container">
+        <h2>Manage Tasks</h2>
+        
+        <table class="task-list">
+            <thead>
+                <tr>
+                    <th>Task Type</th>
+                    <th>Coins Awarded</th>
+                    <th>Max Plays</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="task-list-body">
+                <!-- Sample Task Row -->
+                <tr data-task-id="1">
+                    <td>Play Games</td>
+                    <td>
+                        <input type="number" class="edit-input" value="50" min="1">
+                    </td>
+                    <td>
+                        <input type="number" class="edit-input" value="5" min="1">
+                    </td>
+                    <td class="status">Active</td>
+                    <td>
+                        <button class="button" onclick="updateTask(this)">Update</button>
+                        <button class="button" onclick="toggleStatus(this)">Put on Hold</button>
+                        <button class="button" onclick="deleteTask(this)">Delete</button>
+                    </td>
+                </tr>
+                <!-- More Task Rows will be added dynamically -->
+            </tbody>
+        </table>
     </div>
 
-    <script type="module">
-        // Firebase configuration and initialization
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.14.0/firebase-app.js";
-        import { getFirestore, collection, addDoc, getDocs, doc, deleteDoc, updateDoc } from "https://www.gstatic.com/firebasejs/9.14.0/firebase-firestore.js";
-        import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/9.14.0/firebase-storage.js";
+    <footer>
+        <p>&copy; 2024 Annex Cash. All rights reserved.</p>
+    </footer>
 
-        const firebaseConfig = {
-            apiKey: "AIzaSyD9NdDm3P26coUMtvQ_Rs88ylZX6tu_968",
-            authDomain: "annex-cash.firebaseapp.com",
-            projectId: "annex-cash",
-            storageBucket: "annex-cash.appspot.com",
-            messagingSenderId: "787593405771",
-            appId: "1:787593405771:web:80e357dcc861741b7fb4ce"
-        };
+    <script>
+        function updateTask(button) {
+            const row = button.closest('tr');
+            const taskId = row.getAttribute('data-task-id');
+            const coinsAwarded = row.querySelector('input[type="number"]:nth-of-type(1)').value;
+            const maxPlays = row.querySelector('input[type="number"]:nth-of-type(2)').value;
 
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
-        const storage = getStorage(app);
-
-        // Video Ads Upload Functionality
-        document.getElementById('video-upload-form').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const file = document.getElementById('video-upload').files[0];
-            const storageRef = ref(storage, 'videos/' + file.name);
-            try {
-                await uploadBytes(storageRef, file);
-                const videoURL = await getDownloadURL(storageRef);
-                alert('Video uploaded successfully!');
-                document.getElementById('video-ads-list').innerHTML += <p>Uploaded: <a href="${videoURL}" target="_blank">${file.name}</a></p>;
-            } catch (error) {
-                console.error('Error uploading video:', error);
-            }
-        });
-
-        // Add Survey Links to Firestore
-        document.getElementById('survey-form').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const surveyLink = document.getElementById('survey-link').value;
-            try {
-                await addDoc(collection(db, 'surveys'), {
-                    link: surveyLink,
-                    status: 'active'
-                });
-                alert('Survey link added successfully!');
-                document.getElementById('surveys-list').innerHTML += <p>Survey: <a href="${surveyLink}" target="_blank">${surveyLink}</a></p>;
-            } catch (error) {
-                console.error('Error adding survey:', error);
-            }
-        });
-
-        // Fetch and Display User Accounts from Firestore
-        const userTableBody = document.getElementById('user-table').getElementsByTagName('tbody')[0];
-
-        async function loadUsers() {
-            const querySnapshot = await getDocs(collection(db, 'users'));
-            querySnapshot.forEach((doc) => {
-                const userData = doc.data();
-                const row = userTableBody.insertRow();
-                row.innerHTML = `
-                    <td>${userData.email}</td>
-                    <td>${userData.earnings}</td>
-                    <td>${userData.completedTasks}</td>
-                    <td>${userData.withdrawals}</td>
-                    <td>${userData.referrals}</td>
-                    <td>
-                        <button class="view-user" data-id="${doc.id}">View</button>
-                        <button class="delete-user" data-id="${doc.id}">Delete</button>
-                    </td>`;
-            });
-
-            // Add event listeners for "Delete" buttons
-            document.querySelectorAll('.delete-user').forEach(button => {
-                button.addEventListener('click', async (e) => {
-                    const userId = e.target.dataset.id;
-                    await deleteDoc(doc(db, 'users', userId));
-                    alert('User deleted successfully!');
-                    e.target.closest('tr').remove();
-                });
-            });
-
-            // Add event listeners for "View" buttons (Optional: Detailed View)
-            document.querySelectorAll('.view-user').forEach(button => {
-                button.addEventListener('click', (e) => {
-                    const userId = e.target.dataset.id;
-                    // Here you can add logic to open a detailed user info modal
-                    alert(View details for user: ${userId});
-                });
-            });
+            // Here you can send the updated values to your backend
+            console.log(Updating Task ${taskId}: Coins = ${coinsAwarded}, Max Plays = ${maxPlays});
+            // Make an API call to update the task in your database
         }
 
-        // Load user data on page load
-        loadUsers();
+        function toggleStatus(button) {
+            const row = button.closest('tr');
+            const statusCell = row.querySelector('.status');
+            const currentStatus = statusCell.innerText;
+
+            if (currentStatus === 'Active') {
+                statusCell.innerText = 'On Hold';
+                button.innerText = 'Activate';
+            } else {
+                statusCell.innerText = 'Active';
+                button.innerText = 'Put on Hold';
+            }
+
+            // Here you can send the updated status to your backend
+            const taskId = row.getAttribute('data-task-id');
+            console.log(Toggling Status of Task ${taskId}: New Status = ${statusCell.innerText});
+            // Make an API call to update the status in your database
+        }
+
+        function deleteTask(button) {
+            const row = button.closest('tr');
+            const taskId = row.getAttribute('data-task-id');
+            row.remove();
+
+            // Here you can send a request to delete the task from your database
+            console.log(Deleting Task ${taskId});
+            // Make an API call to delete the task
+        }
     </script>
+
 </body>
 </html>
