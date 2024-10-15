@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Staff Homepage</title>
+    <title>Staff Homepage - Annex Cash</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         body {
@@ -11,6 +11,12 @@
             margin: 0;
             padding: 0;
             background-color: #f4f4f4;
+        }
+        header {
+            background-color: #007bff;
+            color: white;
+            padding: 15px;
+            text-align: center;
         }
         .container {
             padding: 30px;
@@ -21,73 +27,95 @@
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
         }
         h1 {
-            text-align: center;
-            margin-bottom: 20px;
             color: #333;
         }
-        .section {
-            margin-bottom: 40px;
-        }
-        .section h2 {
-            margin-bottom: 15px;
-            color: #007bff;
-        }
-        button {
+        .button {
+            display: inline-block;
+            margin: 10px 0;
+            padding: 10px 20px;
             background-color: #007bff;
             color: white;
-            padding: 10px;
-            border: none;
+            text-decoration: none;
             border-radius: 5px;
-            cursor: pointer;
-            transition: background-color 0.3s;
         }
-        button:hover {
-            background-color: #0056b3;
+        .upload-section, .survey-section, .manage-section, .withdrawal-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            background: #e7e7e7;
+            border-radius: 8px;
         }
-        .alert {
-            color: red;
-            font-weight: bold;
+        .drag-drop {
+            border: 2px dashed #007bff;
+            padding: 20px;
             text-align: center;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        .file-info {
+            margin-top: 10px;
+        }
+        .video-list, .survey-list {
             margin-top: 20px;
+        }
+        .item {
+            background: #d4d4d4;
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 5px;
+            display: flex;
+            justify-content: space-between;
         }
     </style>
 </head>
 <body>
 
+<header>
+    <h1>Staff Homepage - Annex Cash</h1>
+</header>
+
 <div class="container">
-    <h1>Staff Homepage</h1>
 
-    <!-- Section for Adding Video Ads -->
-    <div class="section" id="addVideoAd">
+    <div class="upload-section">
         <h2>Add Video Ad</h2>
-        <input type="text" id="videoTitle" placeholder="Video Title" required>
-        <input type="text" id="videoUrl" placeholder="Video URL" required>
-        <input type="text" id="videoThumbnail" placeholder="Thumbnail URL">
-        <input type="number" id="videoPoints" placeholder="Points Earned" required>
-        <input type="number" id="maxViews" placeholder="Max Views" required>
-        <button onclick="addVideoAd()">Add Video Ad</button>
+        <div class="drag-drop" id="videoUpload">
+            <p>Drag and drop video files here or click to upload</p>
+        </div>
+        <div class="file-info" id="videoFileInfo"></div>
+        <button class="button" onclick="uploadVideo()">Upload Video</button>
     </div>
 
-    <!-- Section for Viewing Registered Users -->
-    <div class="section" id="viewUsers">
-        <h2>Registered Users</h2>
-        <ul id="userList"></ul>
+    <div class="survey-section">
+        <h2>Add Survey</h2>
+        <form id="surveyForm">
+            <label for="surveyLink">Survey Link:</label>
+            <input type="url" id="surveyLink" placeholder="Enter survey link" required>
+            <label for="surveyPoints">Points Awarded:</label>
+            <input type="number" id="surveyPoints" placeholder="Enter points" required>
+            <button type="submit" class="button">Add Survey</button>
+        </form>
     </div>
 
-    <!-- Section for Tracking User Earnings -->
-    <div class="section" id="trackEarnings">
-        <h2>Track User Earnings</h2>
-        <ul id="earningsList"></ul>
+    <div class="manage-section">
+        <h2>Manage Registered Users</h2>
+        <a href="registered_users.html" class="button">View Registered Users</a>
+        <a href="track_users.html" class="button">Track User Earnings</a>
     </div>
 
-    <!-- Section for Approving Withdrawals -->
-    <div class="section" id="approveWithdrawals">
+    <div class="withdrawal-section">
         <h2>Approve Withdrawals</h2>
-        <ul id="withdrawalList"></ul>
+        <a href="approve_withdrawals.html" class="button">View Pending Withdrawals</a>
     </div>
 
-    <!-- Alert Message -->
-    <div class="alert" id="alertMessage"></div>
+    <div class="uploaded-videos">
+        <h2>Uploaded Videos</h2>
+        <div class="video-list" id="uploadedVideoList"></div>
+    </div>
+
+    <div class="uploaded-surveys">
+        <h2>Uploaded Surveys</h2>
+        <div class="survey-list" id="uploadedSurveyList"></div>
+    </div>
+    
 </div>
 
 <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
@@ -107,140 +135,100 @@
     const app = firebase.initializeApp(firebaseConfig);
     const database = firebase.getDatabase(app);
 
-    // Simulated Staff ID (Replace with actual staff authentication logic)
-    const staffId = "sampleStaffId"; // Replace with actual staff ID after login
+    // Drag and Drop Video Upload
+    const videoUpload = document.getElementById('videoUpload');
+    const videoFileInfo = document.getElementById('videoFileInfo');
+    let videoFile;
 
-    // Function to add video ad
-    function addVideoAd() {
-        const title = document.getElementById('videoTitle').value;
-        const url = document.getElementById('videoUrl').value;
-        const thumbnail = document.getElementById('videoThumbnail').value;
-        const points = document.getElementById('videoPoints').value;
-        const maxViews = document.getElementById('maxViews').value;
+    videoUpload.addEventListener('dragover', (event) => {
+        event.preventDefault();
+    });
 
+    videoUpload.addEventListener('drop', (event) => {
+        event.preventDefault();
+        videoFile = event.dataTransfer.files[0];
+        videoFileInfo.innerText = Selected file: ${videoFile.name};
+    });
+
+    videoUpload.addEventListener('click', () => {
+        const fileInput = document.createElement('input');
+        fileInput.type = 'file';
+        fileInput.accept = 'video/*';
+        fileInput.onchange = (event) => {
+            videoFile = event.target.files[0];
+            videoFileInfo.innerText = Selected file: ${videoFile.name};
+        };
+        fileInput.click();
+    });
+
+    function uploadVideo() {
+        if (!videoFile) {
+            alert('Please select a video file to upload.');
+            return;
+        }
+
+        // Code to upload video to Firebase Storage and add to the database
+        const videoRef = firebase.ref(database, 'videos');
+        const newVideoKey = firebase.push(videoRef).key;
         const videoData = {
-            title: title,
-            src: url,
-            thumbnail: thumbnail,
-            points: Number(points),
-            maxViews: Number(maxViews),
-            views: 0
+            title: videoFile.name,
+            // Add other relevant metadata
         };
 
+        // Add video metadata to the database
+        firebase.set(firebase.ref(database, 'videos/' + newVideoKey), videoData)
+            .then(() => {
+                alert('Video uploaded successfully!');
+                videoFileInfo.innerText = '';
+                loadUploadedVideos();
+            })
+            .catch((error) => {
+                console.error("Error uploading video: ", error);
+            });
+    }
+
+    function loadUploadedVideos() {
+        const uploadedVideoList = document.getElementById('uploadedVideoList');
+        uploadedVideoList.innerHTML = ''; // Clear previous videos
+
         const videoRef = firebase.ref(database, 'videos');
-        firebase.push(videoRef, videoData).then(() => {
-            showAlert("Video ad added successfully!");
-            clearInputs();
-        }).catch((error) => {
-            console.error("Error adding video ad: ", error);
-        });
-    }
-
-    function clearInputs() {
-        document.getElementById('videoTitle').value = '';
-        document.getElementById('videoUrl').value = '';
-        document.getElementById('videoThumbnail').value = '';
-        document.getElementById('videoPoints').value = '';
-        document.getElementById('maxViews').value = '';
-    }
-
-    // Function to load registered users
-    function loadRegisteredUsers() {
-        const userList = document.getElementById('userList');
-        userList.innerHTML = ''; // Clear previous users
-
-        const userRef = firebase.ref(database, 'users');
-        firebase.get(userRef).then((snapshot) => {
+        firebase.get(videoRef).then((snapshot) => {
             if (snapshot.exists()) {
-                const users = snapshot.val();
-                for (const userId in users) {
-                    const user = users[userId];
-                    const listItem = document.createElement('li');
-                    listItem.textContent = User: ${user.username} (Email: ${user.email});
-                    userList.appendChild(listItem);
+                const videos = snapshot.val();
+                for (const videoId in videos) {
+                    const video = videos[videoId];
+                    const videoItem = document.createElement('div');
+                    videoItem.className = 'item';
+                    videoItem.innerHTML = `
+                        <span>${video.title}</span>
+                        <button onclick="deleteVideo('${videoId}')">Delete</button>
+                    `;
+                    uploadedVideoList.appendChild(videoItem);
                 }
             } else {
-                userList.innerHTML = '<li>No registered users found.</li>';
+                uploadedVideoList.innerHTML = '<p>No uploaded videos available.</p>';
             }
         }).catch((error) => {
-            console.error("Error fetching users: ", error);
+            console.error("Error fetching videos: ", error);
         });
     }
 
-    // Function to load user earnings
-    function loadUserEarnings() {
-        const earningsList = document.getElementById('earningsList');
-        earningsList.innerHTML = ''; // Clear previous earnings
-
-        const earningsRef = firebase.ref(database, 'earnings');
-        firebase.get(earningsRef).then((snapshot) => {
-            if (snapshot.exists()) {
-                const earnings = snapshot.val();
-                for (const userId in earnings) {
-                    const earning = earnings[userId];
-                    const listItem = document.createElement('li');
-                    listItem.textContent = User: ${earning.username} - Earnings: ${earning.amount} Annex Coins;
-                    earningsList.appendChild(listItem);
-                }
-            } else {
-                earningsList.innerHTML = '<li>No earnings found.</li>';
-            }
-        }).catch((error) => {
-            console.error("Error fetching earnings: ", error);
-        });
+    function deleteVideo(videoId) {
+        // Code to delete video from Firebase Storage and remove from the database
+        firebase.remove(firebase.ref(database, 'videos/' + videoId))
+            .then(() => {
+                alert('Video deleted successfully!');
+                loadUploadedVideos();
+            })
+            .catch((error) => {
+                console.error("Error deleting video: ", error);
+            });
     }
 
-    // Function to load withdrawal requests
-    function loadWithdrawals() {
-        const withdrawalList = document.getElementById('withdrawalList');
-        withdrawalList.innerHTML = ''; // Clear previous withdrawals
-
-        const withdrawalRef = firebase.ref(database, 'withdrawals');
-        firebase.get(withdrawalRef).then((snapshot) => {
-            if (snapshot.exists()) {
-                const withdrawals = snapshot.val();
-                for (const withdrawalId in withdrawals) {
-                    const withdrawal = withdrawals[withdrawalId];
-                    const listItem = document.createElement('li');
-                    listItem.textContent = `User: ${withdrawal.username} - Amount: ${withdrawal.amount} Annex Coins `;
-                    const approveButton = document.createElement('button');
-                    approveButton.textContent = 'Approve';
-                    approveButton.onclick = () => approveWithdrawal(withdrawalId);
-                    listItem.appendChild(approveButton);
-                    withdrawalList.appendChild(listItem);
-                }
-            } else {
-                withdrawalList.innerHTML = '<li>No withdrawal requests found.</li>';
-            }
-        }).catch((error) => {
-            console.error("Error fetching withdrawals: ", error);
-        });
-    }
-
-    function approveWithdrawal(withdrawalId) {
-        const withdrawalRef = firebase.ref(database, 'withdrawals/' + withdrawalId);
-        firebase.remove(withdrawalRef).then(() => {
-            showAlert("Withdrawal approved successfully!");
-            loadWithdrawals(); // Refresh the withdrawal list
-        }).catch((error) => {
-            console.error("Error approving withdrawal: ", error);
-        });
-    }
-
-    function showAlert(message) {
-        const alertMessage = document.getElementById('alertMessage');
-        alertMessage.textContent = message;
-        setTimeout(() => {
-            alertMessage.textContent = '';
-        }, 3000);
-    }
-
-    // Load registered users, user earnings, and withdrawals on page load
+    // Load uploaded videos on page load
     window.onload = function() {
-        loadRegisteredUsers();
-        loadUserEarnings();
-        loadWithdrawals();
-    }
+        loadUploadedVideos();
+    };
 </script>
 
 </body>
